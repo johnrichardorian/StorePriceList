@@ -1,0 +1,75 @@
+        /* CSS for footer */
+        footer {
+            bottom: 0;
+            background-color: #333;
+            color: #fff;
+            padding: 25px 0;
+            text-align: center;
+        }
+        .divfooter {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .divfooter a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 10px;
+            cursor: pointer;
+        }
+        .divfooter a:hover {
+            color: #ffcc00;
+        }
+        /* CSS for slide navigation */
+        .slide-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 50px;
+            z-index: 9999;
+        }
+        .slide-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            min-width: 800px;
+            min-height: auto;
+            overflow: auto;
+            animation: slide-in 0.5s ease-out;
+            position: relative; /* Added position relative */
+        }
+
+        #slideTitle {
+            text-align: center;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            color: #555555;
+            font-size: 30px;
+            z-index: 999; /* Ensure the close button is above the content */
+        }
+        .close-btn:hover {
+            color: rgb(255, 4, 4);
+        }
+
+        /* CSS for slide animation */
+        @keyframes slide-in {
+            from {
+                opacity: 0;
+                transform: translateY(-50%);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }

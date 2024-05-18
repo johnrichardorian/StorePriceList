@@ -1,0 +1,54 @@
+.divSection {
+    width: auto;
+    height: 778px;
+}
+
+.section-container {
+    width: auto;
+    height: 778px;
+    padding: 20px;
+}
+
+.store-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.store-item {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.store-item:hover {
+    background-color: #aeffa4;
+    border: 3px solid black;
+    box-shadow: 0 2px 4px rgba(255, 0, 0, 0.1)
+}
+
+.store-name {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.inventory-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.inventory-table th, .inventory-table td {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+}
+
+.inventory-table th {
+    background-color: #f2f2f2;
+    text-align: left;
+}
+
+.inventory-table td {
+    text-align: left;
+}

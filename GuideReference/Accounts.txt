@@ -1,0 +1,13 @@
+* SuperUser
+	admin
+	admin
+
+* Users
+	john
+	salunesbabayaran
+
+	richard
+	salunesbabayaran
+
+	orian
+	salunesbabayaran

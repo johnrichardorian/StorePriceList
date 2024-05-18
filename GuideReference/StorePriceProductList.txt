@@ -1,0 +1,98 @@
+Title:
+    Sari-Sari Store Price Product List
+
+Purpose: 
+	To manage the budget and ease , with fast access to price in different store.
+
+Beneficiary:
+	Consumer : Fast access in volatile price
+	Seller : Also like advertising and commercial price and products
+
+Why?
+	Price is not PM or Private Message, Consumer have rights or law to know the price.
+
+
+Features:
+
+CRUD Operation
+PS: Price now is dynamic,because of inflation.  Hindi lahat ng nagbebenta ay alam ang presyo. Tulad ng scene na kapag namimili ng paninda yung mismong may ari or nakakaalam ng presyo, yung magbabantay ay pagtitinginan ng presyo, Para iwas maging utang, or magkamali sa pagpresyo. At para alam din ng mga customer at mai manage ang pera na pambili.
+
+Note: Ang ideang ito ay pwede rin sa mga pamasahe sa (Jeep, Tricycle, Bus,). Kaso big project kasi kailangan ng malawak na data.
+
+1. User can able to modify data.
+2. Also have basic calculator on left side of apps
+3. Search Bar.
+4. Account for each user.
+5. User have different database. 
+6. User have permission to public or private ,and share. to link to social media or what else. Like github.
+7. Have favorite products.
+8. Have calendar for scheduler.pu
+9. Have Notes.
+10. Per products have division in each price.
+11. Inventory List.
+12. Item number is optional.
+13. Search Engine (Like typetype, which show suggestions)
+14. Product Picture
+15. Contact Information (Contact Number of Store, Address, Location, Picture Place, Status kung close or open ang store, Payment Options in Menu (GCASH or Paymaya, Account number only was display).)
+16. Store have Schedule Display (Everyday open from 8:00 AM to 6:00 PM)
+17. Chat - User can reservation of Products by chatting seller. Reservation like Notepad or reciept in seller POV.
+18 . Main Menu Have Map category (City, Province, Barangay, Digital Receipt for seller only can Print or Download.)
+19. Seller have availability to upload Logo of Store or embedded to Reciept
+20. Listahan ng may mga utang at mga inutang.
+21. Live Radio?
+22. GcashPayment or another paidplatform and also cashout
+23. Like Cart but dont buy, to select and to know total price
+24. Download or Print Reciept or Budget List
+
+
+CP105 PROJECT IDEA
+
+A.Search Button
+
+1.Public Page, It shows public info and display the data in database???How.
+2.It have login button, It shows the tools for user, that have full features.
+3. Terms and condition, about us, contact us, policy on footer parts.
+4. Public Cart for Universal User 
+
+With Account unlock features
+1. CRUD
+2. Can share Store Info
+3. Share price list info with category
+4. Inventory 
+
+
+A. Store Profile
+	Store Pictures
+	Store Name
+	Address
+	Zip Code
+	Phone
+	web
+	Email Address
+	Description
+	Inventory
+
+
+
+B. Inventory
+	Product Picture
+	Product Name
+	Category type
+	Price
+	
+	
+	Features:
+		0. Pictures Products?
+		1. Modify the Data
+		2. Search the Product, Price, or Category
+
+
+HOME:
+	1. SEO for Store or Product?
+
+
+Concept:
+
+that based on web application title is "Store Price List" it was like public website that shows information about in store, the store shows also thelist of product price and price category. And make a cart that compute the total price, with features of selecting quantity. 
+
+Then If the user create a account then login, it gives a feature that user can share a info about his store and product price

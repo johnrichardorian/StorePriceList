@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboardStyles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navigationBarStyles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/storeProfileContentStyles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/inventoryContentStyles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footerStyles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+{% endblock %}
+
+{% block script %} 
+<script>
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+</script>
+{% endblock %}
+
+{% block body %}
+    <header>
+        <div class="accountContainer">
+                <span id="hello-msg">Hello, {{request.user}}</span>   
+        </div>
+
+        <div class="divTitleDashboard">
+            <h1>DASHBOARD</h1>
+        </div>
+    </header>
+
+    <div class="logoutButtonContainer">
+        <a style="text-decoration: none;" href="{% url 'home' %}">
+            <button id="logoutButton" class="logoutButton" type="logoutButton">Logout<i class="fa fa-sign-out"></i></button>    
+        </a>
+    </div>
+
+    <section>
+        <div class="divSectionDashboard">
+            <div class="navigationBar">
+                <button class="tabButton tabStoreProfile" onclick="openTab(event, 'StoreProfile')" id="defaultOpen">Store-Profile</button>
+                <button class="tabButton tabInventory" onclick="openTab(event, 'Inventory')">Inventory</button>
+            </div>
+    
+            <div id="StoreProfile" class="tabContent">
+                <div class="StoreProfileContent">
+                    <center><h1>STORE PROFILE</h1></center>
+                    <form method="post">
+                        {% csrf_token %}
+                        <label for="store_name">Store Name:</label>
+                        <input type="text" id="store_name" name="store_name" value="{{ store_profile.store_name }}">
+
+                        <label for="address">Address:</label>
+                        <input type="text" id="address" name="address" value="{{ store_profile.address }}"><br>
+
+                        <label for="zip_code">Zip Code:</label>
+                        <input type="text" id="zip_code" name="zip_code" value="{{ store_profile.zip_code }}"><br>
+
+                        <label for="phone">Phone:</label>
+                        <input type="text" id="phone" name="phone" value="{{ store_profile.phone }}"><br>
+
+                        <label for="email_address">Email Address:</label>
+                        <input type="email" id="email_address" name="email_address" value="{{ store_profile.email_address }}"><br>
+
+                        <label for="description">Description:</label>
+                        <textarea id="description" name="description">{{ store_profile.description }}</textarea><br>
+                        <center><button type="submit" class="saveprofile">Save</button></center>
+                    </form>
+                </div>
+            </div>
+            
+    
+            <div id="Inventory" class="tabContent">
+               <div class="InventoryContent">
+                    <h2>Products</h2>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th>Description</th>
+                                <th>Price</th>
+                                <th>Action</th> <!-- New column for action buttons -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in products %}
+                            <tr>
+                                <td>{{ product.product_name }}</td>
+                                <td>{{ product.product_description }}</td>
+                                <td>{{ product.price }}</td>
+                                <td>
+                                <center>
+                                    <div style="display: inline-block;">
+                                        <button class="edit-btn" onclick="openEditProductModal('{{ product.product_id }}', '{{ product.product_name }}', '{{ product.product_description }}', '{{ product.price }}')">Edit</button>
+                                    </div>
+                                    <div style="display: inline-block;">
+                                        <form action="{% url 'delete_product' product.product_id %}" method="post" style="display: inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="del-btn">Delete</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <center><button class="add-btn" onclick="openAddProductModal()">Create</button></center>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    
+<!-- Modal for Adding Products -->
+<div id="addProductModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeAddProductModal()">&times;</span>
+        <h2>Add Product</h2>
+        <form id="addProductForm" method="post" action="{% url 'add_product' %}">
+            {% csrf_token %}
+            <label for="product_name">Product Name:</label>
+            <input type="text" id="product_name" name="product_name" value="{{ products.product_name }}" required>
+
+            <label for="product_description">Product Description:</label>
+            <textarea id="product_description" name="product_description" value="{{ products.product_description }}"></textarea>
+
+            <label for="price">Price:</label>
+            <input type="number" id="price" name="price" step="0.01" value="{{ products.price }}" required>
+
+            <center><button class="add-btn" type="submit">Add Product</button></center>
+        </form>
+    </div>
+</div>
+
+<!-- Modal for Editing Products -->
+<div id="editProductModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeEditProductModal()">&times;</span>
+        <h2>Edit Product</h2>
+        <form id="editProductForm" method="post">
+            {% csrf_token %}
+            <input type="hidden" id="edit_product_id" name="product_id" value="">
+            
+            <label for="edit_product_name">Product Name:</label>
+            <input type="text" id="edit_product_name" name="edit_product_name" required>
+        
+            <label for="edit_product_description">Product Description:</label>
+            <textarea id="edit_product_description" name="edit_product_description"></textarea>
+        
+            <label for="edit_price">Price:</label>
+            <input type="number" id="edit_price" name="edit_price" step="0.01" required>
+        
+            <center><button class="edit-btn" type="submit">Save Changes</button></center>
+        </form>
+        
+    </div>
+</div>
+
+
+
+    <footer>
+        <div class="divfooter">
+            <a href="#about" onclick="showContent('about')">About</a>
+            <a href="#contact" onclick="showContent('contact')">Contact</a>
+            <a href="#termsofservice" onclick="showContent('terms')">Terms of Service</a>
+            <a href="#privacypolicy" onclick="showContent('privacy')">Privacy Policy</a>
+        </div>
+    </footer>
+
+    <!-- Slide Navigation -->
+    <div class="slide-nav" id="slideNav">
+        <div class="slide-content" id="slideContent">
+            <h2 id="slideTitle"></h2>
+            <p id="slideText"></p>
+            
+        <span class="close-btn" onclick="closeSlideNav()">X</span>
+        </div>
+    </div>
+
+
+    <script src="{% static 'js/footerAnimation.js' %}"></script>
+    <script src="{% static 'js/dashboardVerticalTabAnimation.js' %}"></script>
+
+    <script>
+        function openAddProductModal() {
+            document.getElementById("addProductModal").style.display = "block";
+        }
+        
+        function closeAddProductModal() {
+            document.getElementById("addProductModal").style.display = "none";
+        }
+        
+        // Close the modal when the user clicks anywhere outside of the modal
+        window.onclick = function(event) {
+            var modal = document.getElementById("addProductModal");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+
+        function openEditProductModal(product_id, product_name, product_description, price) {
+            // Populate form fields with product details
+            document.getElementById("edit_product_id").value = product_id;
+            document.getElementById("edit_product_name").value = product_name;
+            document.getElementById("edit_product_description").value = product_description;
+            document.getElementById("edit_price").value = price;
+    
+            // Set the action attribute of the form dynamically
+            document.getElementById("editProductForm").action = "{% url 'edit_product' %}";
+    
+            // Display the modal
+            document.getElementById("editProductModal").style.display = "block";
+        }
+    
+        function closeEditProductModal() {
+            document.getElementById("editProductModal").style.display = "none";
+        }
+    </script>
+        
+
+{% endblock %}
