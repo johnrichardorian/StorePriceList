@@ -22,7 +22,7 @@
 {% block body %}
     <header>
         <div class="accountContainer">
-                <span id="hello-msg">Hello, {{request.user}}</span>   
+                <span id="hello-msg">Hello, {{request.user.first_name|default:request.user.email}}</span>   
         </div>
 
         <div class="divTitleDashboard">
@@ -31,7 +31,7 @@
     </header>
 
     <div class="logoutButtonContainer">
-        <a style="text-decoration: none;" href="{% url 'home' %}">
+        <a style="text-decoration: none;" href="{% url 'logout' %}">
             <button id="logoutButton" class="logoutButton" type="logoutButton">Logout<i class="fa fa-sign-out"></i></button>    
         </a>
     </div>
