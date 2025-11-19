@@ -7,58 +7,316 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
 	<link rel="stylesheet" href="{% static 'css/loginStyles.css' %}">
+	<style>
+		.login-container {
+			min-height: 100vh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			padding: 20px;
+		}
+		.login-card {
+			background: white;
+			border-radius: 20px;
+			box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+			padding: 40px;
+			max-width: 450px;
+			width: 100%;
+		}
+		.login-icon {
+			text-align: center;
+			margin-bottom: 20px;
+		}
+		.login-icon i {
+			font-size: 70px;
+			color: #007bff;
+		}
+		.login-title {
+			text-align: center;
+			font-size: 28px;
+			font-weight: bold;
+			margin-bottom: 10px;
+			color: #333;
+		}
+		.login-subtitle {
+			text-align: center;
+			color: #666;
+			margin-bottom: 30px;
+			font-size: 14px;
+		}
+		.form-group-custom {
+			margin-bottom: 20px;
+		}
+		.input-group-custom {
+			position: relative;
+		}
+		.input-group-custom input {
+			padding: 12px 45px 12px 15px;
+			border: 2px solid #e0e0e0;
+			border-radius: 10px;
+			width: 100%;
+			font-size: 16px;
+			transition: all 0.3s;
+		}
+		.input-group-custom input:focus {
+			outline: none;
+			border-color: #667eea;
+			box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+		}
+		.input-icon {
+			position: absolute;
+			right: 15px;
+			top: 50%;
+			transform: translateY(-50%);
+			color: #999;
+		}
+		.password-toggle {
+			cursor: pointer;
+			transition: color 0.3s;
+		}
+		.password-toggle:hover {
+			color: #667eea;
+		}
+		.remember-me {
+			display: flex;
+			align-items: center;
+			margin-bottom: 20px;
+		}
+		.remember-me input[type="checkbox"] {
+			margin-right: 8px;
+			width: 18px;
+			height: 18px;
+			cursor: pointer;
+		}
+		.remember-me label {
+			margin: 0;
+			cursor: pointer;
+			color: #666;
+			font-size: 14px;
+		}
+		.btn-login {
+			width: 100%;
+			padding: 14px;
+			background: #007bff;
+			color: white;
+			border: none;
+			border-radius: 10px;
+			font-size: 16px;
+			font-weight: 600;
+			cursor: pointer;
+			transition: all 0.3s;
+			margin-top: 10px;
+		}
+		.btn-login:hover {
+			background: #0056b3;
+			transform: translateY(-2px);
+			box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+		}
+		.btn-guest {
+			width: 100%;
+			padding: 14px;
+			background: white;
+			color: #007bff;
+			border: 2px solid #007bff;
+			border-radius: 10px;
+			font-size: 16px;
+			font-weight: 600;
+			text-decoration: none;
+			display: block;
+			text-align: center;
+			transition: all 0.3s;
+			margin-top: 15px;
+		}
+		.btn-guest:hover {
+			background: #007bff;
+			color: white;
+			text-decoration: none;
+		}
+		.divider {
+			display: flex;
+			align-items: center;
+			margin: 20px 0;
+			color: #999;
+		}
+		.divider::before,
+		.divider::after {
+			content: '';
+			flex: 1;
+			height: 1px;
+			background: #e0e0e0;
+		}
+		.divider span {
+			padding: 0 15px;
+			font-size: 12px;
+		}
+		.error-message {
+			background: #f8d7da;
+			color: #721c24;
+			padding: 12px;
+			border-radius: 8px;
+			margin-bottom: 20px;
+			font-size: 14px;
+			border: 1px solid #f5c6cb;
+		}
+		.success-message {
+			background: #d4edda;
+			color: #155724;
+			padding: 12px;
+			border-radius: 8px;
+			margin-bottom: 20px;
+			font-size: 14px;
+			border: 1px solid #c3e6cb;
+		}
+		.register-link {
+			text-align: center;
+			margin-top: 20px;
+			color: #666;
+		}
+		.register-link a {
+			color: #007bff;
+			text-decoration: none;
+			font-weight: 600;
+		}
+		.register-link a:hover {
+			text-decoration: underline;
+		}
+		.footer-text {
+			text-align: center;
+			margin-top: 30px;
+			color: #999;
+			font-size: 12px;
+		}
+	</style>
 {% endblock %}
 
-{% block script %} {% endblock %}
+{% block script %}
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		// Password visibility toggle
+		const passwordToggle = document.getElementById('togglePassword');
+		const passwordInput = document.getElementById('password');
+		
+		if (passwordToggle && passwordInput) {
+			passwordToggle.addEventListener('click', function() {
+				const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+				passwordInput.setAttribute('type', type);
+				this.classList.toggle('fa-eye');
+				this.classList.toggle('fa-eye-slash');
+			});
+		}
+		
+		// Remember me checkbox
+		const rememberMeCheckbox = document.getElementById('rememberMe');
+		if (rememberMeCheckbox) {
+			// Load saved state
+			const savedRememberMe = localStorage.getItem('rememberMe') === 'true';
+			if (savedRememberMe) {
+				rememberMeCheckbox.checked = true;
+			}
+			
+			rememberMeCheckbox.addEventListener('change', function() {
+				localStorage.setItem('rememberMe', this.checked);
+			});
+		}
+		
+		// Email validation
+		function isValidEmail(email) {
+			const pattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+			return pattern.test(email);
+		}
+		
+		// Form submission validation
+		const form = document.querySelector('form');
+		const emailInput = document.querySelector('input[name="email"]');
+		
+		if (form) {
+			form.addEventListener('submit', function(e) {
+				let isValid = true;
+				let errorMessage = '';
+				
+				// Validate email and password
+				if (!emailInput || !emailInput.value.trim() || !passwordInput || !passwordInput.value.trim()) {
+					errorMessage = 'Please enter email and password';
+					isValid = false;
+				}
+				// Validate email format
+				else if (!isValidEmail(emailInput.value.trim())) {
+					errorMessage = 'Enter a valid email address';
+					isValid = false;
+				}
+				
+				if (!isValid) {
+					e.preventDefault();
+					alert(errorMessage);
+				}
+			});
+		}
+	});
+</script>
+{% endblock %}
 		
 {% block body %}
-	<div class="container h-100">
-		<div class="d-flex justify-content-center h-100">
-			<div class="user_card">
-				<div class="d-flex justify-content-center">
-
-
-					<h3 id="form-title">LOGIN</h3>
-				</div>
-				<div class="d-flex justify-content-center form_container">
-					<form method="POST" action="">
-                        {% csrf_token %}
-						<div class="input-group mb-3">
-							<div class="input-group-append">
-								<span class="input-group-text"><i class="fas fa-envelope-square"></i></span>
-							</div>
-							<input type="email" name="email" placeholder="Email..." class="form-control" required>
-						</div>
-						<div class="input-group mb-2">
-							<div class="input-group-append">
-								<span class="input-group-text"><i class="fas fa-key"></i></span>
-							</div>
-								<input type="password" name="password" placeholder="Password..." class="form-control" required>
-						</div>
-
-							<div class="d-flex justify-content-center mt-3 login_container">
-				 				<input class="btn login_btn" type="submit" value="Login">
-				   			</div>
-
-                            <div class="d-flex justify-content-center mt-3 guestButtonContainer">
-                                <a href="{% url 'home' %}" class="btnGuest">Continue as Guest</a>
-                            </div>
-					</form>
-
-				</div>
-
-                {% for messages in messages %}
-                    <p id="messages">{{messages}}</p>
-                {% endfor %}
-
-				<div class="mt-4">
-					<div class="d-flex justify-content-center links">
-						Don't have an account? <a href="{% url 'registerPage' %}" class="ml-2">Sign Up</a>
-					</div>
+	<div class="login-container">
+		<div class="login-card">
+			<div class="login-icon">
+				<i class="fas fa-shopping-cart"></i>
+			</div>
+			<h2 class="login-title">Welcome to Store Price List</h2>
+			<p class="login-subtitle">Login to manage and view prices</p>
 			
+			{% if messages %}
+				{% for message in messages %}
+					{% if message.tags == 'error' %}
+						<div class="error-message">{{ message }}</div>
+					{% else %}
+						<div class="success-message">{{ message }}</div>
+					{% endif %}
+				{% endfor %}
+			{% endif %}
+			
+			<form method="POST" action="" id="loginForm">
+				{% csrf_token %}
+				
+				<div class="form-group-custom">
+					<div class="input-group-custom">
+						<input type="email" name="email" id="email" placeholder="Email..." class="form-control" required autocomplete="email">
+						<span class="input-icon"><i class="fas fa-envelope"></i></span>
+					</div>
 				</div>
+				
+				<div class="form-group-custom">
+					<div class="input-group-custom">
+						<input type="password" name="password" id="password" placeholder="Password..." class="form-control" required autocomplete="current-password">
+						<span class="input-icon password-toggle" id="togglePassword">
+							<i class="fas fa-eye-slash"></i>
+						</span>
+					</div>
+				</div>
+				
+				<div class="remember-me">
+					<input type="checkbox" id="rememberMe" name="rememberMe">
+					<label for="rememberMe">Remember Me</label>
+				</div>
+				
+				<button type="submit" class="btn-login">Login</button>
+			</form>
+			
+			<div class="divider">
+				<span>OR</span>
+			</div>
+			
+			<a href="{% url 'home' %}" class="btn-guest">
+				<i class="fas fa-user"></i> Continue as Guest
+			</a>
+			
+			<div class="register-link">
+				Don't have an account? <a href="{% url 'registerPage' %}">Sign Up</a>
+			</div>
+			
+			<div class="footer-text">
+				Secure access to Store Price List
 			</div>
 		</div>
 	</div>
-	
 {% endblock %}

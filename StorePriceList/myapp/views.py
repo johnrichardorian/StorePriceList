@@ -55,7 +55,7 @@ def registerPage(request):
                     description=''
                 )
             
-            messages.success(request, 'Account was created successfully')
+            messages.success(request, 'Account Created Successfully! Let\'s set up your store details.')
             return redirect('dashboard')  # Redirect to the dashboard page after registration
     
     context = {'form': form}
@@ -66,8 +66,22 @@ def loginPage(request):
         return redirect('dashboard')  # Redirect logged-in users to the dashboard
     
     if request.method == 'POST':
-        email = request.POST.get('email', '').lower().strip()
-        password = request.POST.get('password')
+        email = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '').strip()
+        
+        # Validation matching iOS app
+        if not email or not password:
+            messages.error(request, 'Please enter email and password')
+            return render(request, 'login.html')
+        
+        # Email format validation
+        import re
+        pattern = r'^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$'
+        if not re.match(pattern, email, re.IGNORECASE):
+            messages.error(request, 'Enter a valid email address')
+            return render(request, 'login.html')
+        
+        email = email.lower().strip()
         
         # Try to find user by email (since we use email as username)
         try:
@@ -75,7 +89,8 @@ def loginPage(request):
             # Authenticate using the username (which is the email)
             user = authenticate(request, username=user.username, password=password)
         except User.DoesNotExist:
-            user = None
+            messages.error(request, 'Account not found')
+            return render(request, 'login.html')
         
         if user is not None:
             login(request, user)
@@ -94,7 +109,7 @@ def loginPage(request):
             
             return redirect('dashboard')  # Redirect to the dashboard page after login
         else:
-            messages.info(request, 'Email or Password is incorrect')
+            messages.error(request, 'Incorrect password')
     
     return render(request, 'login.html')
 

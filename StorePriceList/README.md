@@ -497,6 +497,122 @@ StorePriceList_Web/
    - Check that user exists in database
    - Verify password is correct
 
+## 🔄 Changes Made - Part 2
+
+### Form Validation & UI Redesign
+
+#### 1. **Enhanced Form Validation (Matching iOS App)**
+   - **Registration Form Validations**:
+     - Name validation: "Enter your full name" if name is empty
+     - Email format validation: "Enter a valid email address" for invalid email format
+     - Password length validation: "Password must be at least 6 characters"
+     - Password match validation: "Passwords do not match" if passwords don't match
+     - Duplicate email check: "Email already registered" if email exists
+     - Success message: "Account Created Successfully! Let's set up your store details."
+   
+   - **Login Form Validations**:
+     - Empty field check: "Please enter email and password" if fields are empty
+     - Email format validation: "Enter a valid email address" for invalid format
+     - Account existence check: "Account not found" if email doesn't exist
+     - Password validation: "Incorrect password" if password is wrong
+   
+   - **Implementation**:
+     - Server-side validation in `forms.py` with custom `clean_*` methods
+     - Client-side JavaScript validation for real-time feedback
+     - Specific error messages matching iOS app exactly
+
+#### 2. **Redesigned Login Page**
+   - **Before**: Basic Bootstrap form with minimal styling
+   - **After**: 
+     - Modern gradient background (purple/blue gradient)
+     - Centered card design with rounded corners and shadow
+     - Shopping cart icon at the top
+     - "Welcome to Store Price List" title with subtitle
+     - Password visibility toggle (eye icon)
+     - Remember Me checkbox functionality
+     - Improved input fields with icons and focus states
+     - Better error message display with styled alerts
+     - "Continue as Guest" button with hover effects
+     - Responsive design for all screen sizes
+
+#### 3. **Redesigned Registration Page**
+   - **Before**: Basic Bootstrap form with minimal styling
+   - **After**:
+     - Modern gradient background matching login page
+     - Centered card design with rounded corners and shadow
+     - User-plus icon at the top
+     - "Create Your Account" title with subtitle
+     - Password visibility toggle for both password fields
+     - Real-time form validation with JavaScript
+     - Improved input fields with icons and focus states
+     - Better error message display with styled alerts
+     - Success message display
+     - "Continue as Guest" button with hover effects
+     - Responsive design for all screen sizes
+
+#### 4. **Password Visibility Toggle**
+   - Added eye/eye-slash icon toggle for password fields
+   - Works on both login and registration pages
+   - Toggle between showing and hiding password text
+   - Smooth icon transition animation
+
+#### 5. **Client-Side Validation**
+   - Real-time validation before form submission
+   - Prevents form submission if validation fails
+   - Shows alert messages matching server-side errors
+   - Email format validation using regex
+   - Password length and match validation
+   - Name field validation
+
+#### 6. **Improved Error Handling**
+   - Specific error messages matching iOS app exactly:
+     - "Enter your full name"
+     - "Enter a valid email address"
+     - "Password must be at least 6 characters"
+     - "Passwords do not match"
+     - "Email already registered"
+     - "Please enter email and password"
+     - "Account not found"
+     - "Incorrect password"
+   - Styled error messages with red background
+   - Success messages with green background
+   - Better visual feedback for users
+
+#### 7. **Enhanced User Experience**
+   - Smooth transitions and hover effects
+   - Better visual hierarchy
+   - Consistent color scheme (blue for login, green for register)
+   - Improved spacing and typography
+   - Professional gradient backgrounds
+   - Modern card-based design
+   - Better accessibility with proper labels and autocomplete
+
+#### 8. **Remember Me Functionality**
+   - Added Remember Me checkbox to login form
+   - Stores preference in localStorage
+   - Maintains state across page reloads
+
+### Technical Improvements
+
+#### Form Validation Updates
+- Added `clean_first_name()` method for name validation
+- Enhanced `clean_email()` with regex pattern matching
+- Added `clean_password1()` for password length validation
+- Enhanced `clean()` method for password match validation
+- All validation messages match iOS app exactly
+
+#### View Updates
+- Updated `loginPage()` view with step-by-step validation matching iOS
+- Updated `registerPage()` with success message matching iOS
+- Better error message handling with specific messages
+
+#### Template Updates
+- Complete redesign of `login.html` with modern UI
+- Complete redesign of `register.html` with modern UI
+- Added inline CSS for better styling control
+- Added JavaScript for client-side validation and password toggle
+- Improved form structure and accessibility
+
 ## 📄 License
 
 This project is part of a group project for educational purposes.
@@ -507,5 +623,5 @@ Developed as part of a group project, porting the iOS Store Price List app conce
 
 ---
 
-**Last Updated**: Based on changes made to align with iOS app concept and fix account creation and product ownership issues.
+**Last Updated**: Based on changes made to align with iOS app concept, fix account creation and product ownership issues (Part 1), and implement form validation with UI redesign (Part 2).
 
