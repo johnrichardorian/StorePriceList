@@ -9,9 +9,197 @@
         <link rel="stylesheet" href="{% static 'css/footerStyles.css' %}">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
+        <style>
+            .search-btn:hover {
+                background: linear-gradient(135deg, #0056b3 0%, #004085 100%) !important;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+            }
+            
+            .clear-search-btn:hover {
+                background: #5a6268 !important;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+            }
+            
+            @media screen and (max-width: 768px) {
+                .search-form {
+                    flex-direction: column !important;
+                }
+                
+                .search-form > div {
+                    width: 100% !important;
+                    min-width: 100% !important;
+                }
+                
+                .search-btn, .clear-search-btn {
+                    width: 100%;
+                }
+            }
+            
+            /* Search Highlight Styles */
+            .search-highlight {
+                transition: background-color 0.3s ease;
+            }
+            
+            .search-highlight-row {
+                transition: background-color 0.3s ease;
+                border-left: 3px solid #ffc107;
+            }
+            
+            .search-highlight-store {
+                transition: background-color 0.3s ease;
+            }
+            
+            .inventory-table tbody tr.search-highlight-row:hover {
+                background-color: #fff3cd !important;
+            }
+            
+            .store-item.search-highlight-store {
+                margin-bottom: 20px;
+            }
+        </style>
     {% endblock %}
 
-    {% block script %} {% endblock %}
+    {% block script %}
+    <script>
+        // Real-time search as user types
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const searchForm = document.getElementById('searchForm');
+            let searchTimeout;
+            let isSubmitting = false;
+            
+            if (searchInput) {
+                searchInput.addEventListener('input', function(e) {
+                    clearTimeout(searchTimeout);
+                    
+                    // If input is empty, submit immediately to clear search
+                    if (this.value.trim() === '') {
+                        if (!isSubmitting) {
+                            isSubmitting = true;
+                            searchForm.submit();
+                        }
+                        return;
+                    }
+                    
+                    // Debounce: wait 300ms after user stops typing
+                    searchTimeout = setTimeout(function() {
+                        if (!isSubmitting) {
+                            isSubmitting = true;
+                            searchForm.submit();
+                        }
+                    }, 300);
+                });
+                
+                // Handle backspace and delete keys properly - don't interfere with normal deletion
+                searchInput.addEventListener('keydown', function(e) {
+                    // Don't prevent default behavior for backspace/delete
+                    if (e.key === 'Backspace' || e.key === 'Delete') {
+                        clearTimeout(searchTimeout);
+                    }
+                });
+                
+                // Check if field is empty after keyup (after deletion happens)
+                searchInput.addEventListener('keyup', function(e) {
+                    if (e.key === 'Backspace' || e.key === 'Delete') {
+                        clearTimeout(searchTimeout);
+                        // If field becomes empty, submit immediately
+                        if (this.value.trim() === '') {
+                            if (!isSubmitting) {
+                                isSubmitting = true;
+                                searchForm.submit();
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Reset submitting flag after form submission
+            if (searchForm) {
+                searchForm.addEventListener('submit', function() {
+                    isSubmitting = false;
+                });
+            }
+            
+            // Highlight matching products
+            const searchQuery = "{{ search_query|escapejs }}";
+            if (searchQuery) {
+                highlightSearchResults(searchQuery);
+            }
+        });
+        
+        function highlightSearchResults(query) {
+            if (!query) return;
+            
+            const queryLower = query.toLowerCase();
+            
+            // Highlight store names
+            const storeNames = document.querySelectorAll('.store-name');
+            storeNames.forEach(function(storeName) {
+                const text = storeName.textContent;
+                const textLower = text.toLowerCase();
+                if (textLower.includes(queryLower)) {
+                    storeName.style.backgroundColor = '#fff3cd';
+                    storeName.style.padding = '5px 10px';
+                    storeName.style.borderRadius = '5px';
+                    storeName.style.fontWeight = '600';
+                    storeName.classList.add('search-highlight');
+                }
+            });
+            
+            const productNames = document.querySelectorAll('.inventory-table tbody td:first-child');
+            const productDescriptions = document.querySelectorAll('.inventory-table tbody td:nth-child(2)');
+            
+            // Highlight product names
+            productNames.forEach(function(cell) {
+                const text = cell.textContent;
+                const textLower = text.toLowerCase();
+                if (textLower.includes(queryLower)) {
+                    cell.style.backgroundColor = '#fff3cd';
+                    cell.style.fontWeight = '600';
+                    cell.classList.add('search-highlight');
+                }
+            });
+            
+            // Highlight product descriptions
+            productDescriptions.forEach(function(cell) {
+                const text = cell.textContent;
+                const textLower = text.toLowerCase();
+                if (textLower.includes(queryLower)) {
+                    cell.style.backgroundColor = '#fff3cd';
+                    cell.style.fontWeight = '600';
+                    cell.classList.add('search-highlight');
+                }
+            });
+            
+            // Highlight entire rows that match
+            const rows = document.querySelectorAll('.inventory-table tbody tr');
+            rows.forEach(function(row) {
+                const rowText = row.textContent.toLowerCase();
+                if (rowText.includes(queryLower)) {
+                    row.style.backgroundColor = '#fff9e6';
+                    row.classList.add('search-highlight-row');
+                }
+            });
+            
+            // Highlight entire store items if store name matches
+            const storeItems = document.querySelectorAll('.store-item');
+            storeItems.forEach(function(storeItem) {
+                const storeName = storeItem.querySelector('.store-name');
+                if (storeName) {
+                    const storeNameText = storeName.textContent.toLowerCase();
+                    if (storeNameText.includes(queryLower)) {
+                        storeItem.style.backgroundColor = '#fff9e6';
+                        storeItem.style.borderLeft = '3px solid #ffc107';
+                        storeItem.style.paddingLeft = '15px';
+                        storeItem.classList.add('search-highlight-store');
+                    }
+                }
+            });
+        }
+    </script>
+    {% endblock %}
 
     {% block body %}
         <header>
@@ -27,6 +215,37 @@
         </header>
 
         <section class="section-container">
+            <!-- Search Bar -->
+            <div class="search-container" style="max-width: 800px; margin: 20px auto; padding: 0 20px;">
+                <form method="GET" action="{% url 'home' %}" id="searchForm" class="search-form" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <div style="flex: 1; position: relative; min-width: 250px;">
+                        <input 
+                            type="text" 
+                            name="search" 
+                            id="searchInput"
+                            placeholder="Search by store name, product name, or description..." 
+                            value="{{ search_query }}"
+                            class="search-input"
+                            autocomplete="off"
+                            style="width: 100%; padding: 12px 45px 12px 15px; border: 2px solid #e0e0e0; border-radius: 25px; font-size: 14px; outline: none; transition: all 0.3s ease; box-sizing: border-box;"
+                            onfocus="this.style.borderColor='#007bff'; this.style.boxShadow='0 0 0 3px rgba(0, 123, 255, 0.1)'"
+                            onblur="this.style.borderColor='#e0e0e0'; this.style.boxShadow='none'"
+                        >
+                        <i class="fa fa-search" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #999; pointer-events: none;"></i>
+                    </div>
+                    {% if search_query %}
+                    <a href="{% url 'home' %}" class="clear-search-btn" style="padding: 12px 20px; background: #6c757d; color: white; border: none; border-radius: 25px; cursor: pointer; font-size: 14px; text-decoration: none; transition: all 0.3s ease; white-space: nowrap; flex-shrink: 0;">
+                        <i class="fa fa-times"></i> Clear
+                    </a>
+                    {% endif %}
+                </form>
+                {% if search_query %}
+                <p style="text-align: center; margin-top: 10px; color: #666; font-size: 14px;">
+                    <i class="fa fa-info-circle"></i> Showing results for: <strong>"{{ search_query }}"</strong>
+                </p>
+                {% endif %}
+            </div>
+            
             <div class="store-list">
                 {% for store in store_list %}
                     <div class="store-item">

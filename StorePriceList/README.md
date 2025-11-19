@@ -12,6 +12,54 @@ A Django-based web application that allows store owners to manage their store pr
 - [Installation & Setup](#installation--setup)
 - [Usage](#usage)
 - [Changes Made](#changes-made)
+  - [Part 1 - Account Creation & Product Ownership](#🔄-changes-made---part-1)
+    - [Major Changes](#major-changes)
+      - [1. Account Creation System](#1-account-creation-system)
+      - [2. Login System](#2-login-system)
+      - [3. User-Store Relationship](#3-user-store-relationship)
+      - [4. Product Ownership & Security](#4-product-ownership--security)
+      - [5. Data Isolation](#5-data-isolation)
+      - [6. Validation & Error Handling](#6-validation--error-handling)
+      - [7. Logout Functionality](#7-logout-functionality)
+      - [8. Guest User Experience](#8-guest-user-experience)
+  - [Part 2 - Form Validation & UI Redesign](#🔄-changes-made---part-2)
+    - [Form Validation & UI Redesign](#form-validation--ui-redesign)
+      - [1. Enhanced Form Validation](#1-enhanced-form-validation-matching-ios-app)
+      - [2. Redesigned Login Page](#2-redesigned-login-page)
+      - [3. Redesigned Registration Page](#3-redesigned-registration-page)
+      - [4. Password Visibility Toggle](#4-password-visibility-toggle)
+      - [5. Client-Side Validation](#5-client-side-validation)
+      - [6. Improved Error Handling](#6-improved-error-handling)
+      - [7. Enhanced User Experience](#7-enhanced-user-experience)
+      - [8. Remember Me Functionality](#8-remember-me-functionality)
+    - [Technical Improvements](#technical-improvements)
+      - [Form Validation Updates](#form-validation-updates)
+      - [View Updates](#view-updates)
+      - [Template Updates](#template-updates)
+  - [Part 3 - Store Profile Completion & Dashboard Improvements](#🔄-changes-made---part-3)
+    - [Changes from Part 2](#changes-from-part-2)
+      - [1. Store Profile Completion Requirement](#1-store-profile-completion-requirement-matching-ios-app)
+      - [2. Account Button Navigation Change](#2-account-button-navigation-change)
+      - [3. Top-Right Popup Notifications](#3-top-right-popup-notifications-enhanced-from-part-2)
+      - [4. Store Profile Section UI/UX Redesign](#4-store-profile-section-uiux-redesign)
+      - [5. Inventory Tab Access Control](#5-inventory-tab-access-control)
+      - [6. Dashboard Responsive Design & Positioning Fixes](#6-dashboard-responsive-design--positioning-fixes)
+    - [Technical Improvements from Part 2](#technical-improvements-from-part-2)
+      - [View Updates](#view-updates-1)
+      - [Template Updates](#template-updates-1)
+      - [JavaScript Enhancements](#javascript-enhancements)
+      - [CSS Enhancements](#css-enhancements)
+  - [Part 4 - Search Functionality & Responsive Design](#🔄-changes-made---part-4)
+    - [Search Functionality & Responsive Design Improvements](#search-functionality--responsive-design-improvements)
+      - [1. Inventory Search Bar](#1-inventory-search-bar-store-owner-dashboard)
+      - [2. Guest User Search Bar](#2-guest-user-search-bar-landing-page)
+      - [3. Responsive Design Improvements](#3-responsive-design-improvements-dashboard)
+    - [Technical Implementation](#technical-implementation)
+      - [View Updates](#view-updates-2)
+      - [Template Updates](#template-updates-2)
+      - [Search Features](#search-features)
+      - [CSS Enhancements](#css-enhancements-1)
+      - [JavaScript Enhancements](#javascript-enhancements-1)
 - [Before & After Comparison](#before--after-comparison)
 - [Models](#models)
 - [Views & URLs](#views--urls)
@@ -804,6 +852,151 @@ StorePriceList_Web/
 - Media queries for mobile (480px) and tablet (768px) breakpoints
 - Override styles with `!important` to fix external CSS conflicts
 
+## 🔄 Changes Made - Part 4
+
+### Search Functionality & Responsive Design Improvements
+
+#### 1. **Inventory Search Bar (Store Owner Dashboard)**
+   - **Before (Part 3)**: No search functionality in Inventory section
+   - **After (Part 4)**: 
+     - Added search bar in Inventory tab of Store Owner Dashboard
+     - Search by product name or description (case-insensitive)
+     - **Real-time search**: Instant filtering as user types (300ms debounce)
+     - Search icon inside input field
+     - "Clear" button appears when search is active
+     - Shows search query in results message
+     - Maintains search query in URL for bookmarking/sharing
+     - **Search result highlighting**: Matching product names and descriptions highlighted in yellow
+     - **Row highlighting**: Entire table rows with matches highlighted
+     - Responsive design - stacks vertically on mobile devices
+     - Modern rounded input design with focus states
+     - Fixed overlapping issues between search bar and clear button
+
+#### 2. **Guest User Search Bar (Landing Page)**
+   - **Before (Part 3)**: No search functionality on home page
+   - **After (Part 4)**: 
+     - Added search bar at top of landing page (home.html)
+     - **Multi-criteria search**: Search by store name, product name, or description
+     - **Store name search**: When searching by store name, shows the store and ALL its products
+     - **Product search**: Filters both products and stores (shows only stores with matching products)
+     - **Real-time search**: Instant filtering as user types (300ms debounce)
+     - Search icon inside input field
+     - "Clear" button appears when search is active
+     - Shows search query in results message
+     - Maintains search query in URL
+     - **Search result highlighting**: 
+       - Store names highlighted in yellow with padding
+       - Product names and descriptions highlighted in yellow
+       - Entire store items highlighted with yellow background and left border
+       - Table rows with matches highlighted
+     - Responsive design - stacks vertically on mobile devices
+     - Modern rounded input design with focus states
+     - Centered layout with max-width for better UX
+     - Fixed overlapping issues between search bar and clear button
+
+#### 3. **Responsive Design Improvements (Dashboard)**
+   - **Before (Part 3)**: Dashboard required zooming out to view all components correctly
+   - **After (Part 4)**: 
+     - **Copied responsiveness from home.html**: Applied same responsive patterns
+     - **Global overflow prevention**: Added `overflow-x: hidden` to prevent horizontal scrolling
+     - **Flexible container widths**: Changed from fixed widths to `width: auto` and `max-width: 100%`
+     - **Removed fixed heights**: Eliminated `min-height` constraints that caused overflow
+     - **Viewport-based sizing**: All containers now respect viewport width
+     - **Table responsiveness**: Tables adapt to screen width without fixed minimums
+     - **Form constraints**: Forms use `max-width: min(800px, 100%)` for better scaling
+     - **Mobile optimizations**: Enhanced responsive breakpoints at 768px and 480px
+     - **Box-sizing**: Applied `box-sizing: border-box` globally for consistent sizing
+
+### Technical Implementation
+
+#### View Updates
+- **Home View (`home()`)**: 
+  - Added search query handling using GET parameter
+  - **Store name search**: Filters `StoreProfile` objects by store name using `Q` objects
+  - **Product search**: Filters `Inventory` objects by product name or description using `Q` objects
+  - **Combined results**: When store name matches, includes all products from that store
+  - Filters `StoreProfile` objects to show only stores with matching products or store names
+  - Passes `search_query` to template for display
+  
+- **Dashboard View (`dashboard()`)**: 
+  - Added search query handling using GET parameter
+  - Filters products by name or description (case-insensitive)
+  - Only searches within the logged-in user's own products
+  - Passes `search_query` to template for display
+
+#### Template Updates
+- **Home Template (`home.html`)**: 
+  - Added search form with GET method
+  - **Real-time search JavaScript**: Debounced input (300ms) for instant search
+  - **Backspace/Delete handling**: Proper handling of deletion with immediate search on empty field
+  - **Search highlighting function**: `highlightSearchResults()` for visual feedback
+  - Search input with icon and placeholder ("Search by store name, product name, or description...")
+  - Clear button with proper flexbox layout to prevent overlap
+  - Conditional display of search results message
+  - Responsive CSS with media queries
+  - **Store name highlighting**: Highlights matching store names and entire store items
+  
+- **Dashboard Template (`dashboard.html`)**: 
+  - Added search form in Inventory section
+  - **Real-time search JavaScript**: Debounced input (300ms) for instant search
+  - **Backspace/Delete handling**: Proper handling of deletion with immediate search on empty field
+  - **Search highlighting function**: `highlightInventorySearchResults()` for visual feedback
+  - Search input with icon and placeholder
+  - Clear button with proper flexbox layout to prevent overlap
+  - Conditional display of search results message
+  - Responsive CSS with media queries
+  - **Global responsive styles**: Added overflow prevention and flexible container widths
+  - **Section responsiveness**: Changed to `width: auto` matching home.html patterns
+
+#### Search Features
+- **Case-Insensitive Search**: Uses `icontains` for partial matching
+- **Multi-Criteria Search**: 
+  - Guest users: Search by store name, product name, OR description
+  - Store owners: Search by product name OR description
+- **Real-Time Search**: Debounced input (300ms) - searches as user types without button click
+- **Visual Highlighting**: 
+  - Yellow background for matching text
+  - Bold font weight for matches
+  - Entire rows/items highlighted for better visibility
+  - Smooth transitions for highlight appearance
+- **URL-Based**: Search query maintained in URL for easy sharing
+- **Clear Functionality**: Easy way to reset search and view all items
+- **Visual Feedback**: Shows active search query to user
+- **Responsive Design**: Adapts to mobile and tablet screens
+- **Backspace/Delete Support**: Proper handling of text deletion with immediate search update
+
+#### CSS Enhancements
+- **Search Bar Styling**:
+  - Modern rounded input fields with border radius (25px)
+  - Focus states with blue border and shadow
+  - Search icon positioned absolutely inside input
+  - Clear button with hover effects
+  - Flexbox layout with `flex-wrap` for responsive stacking
+  - Fixed overlapping issues with `min-width`, `flex-shrink`, and `box-sizing`
+  
+- **Highlighting Styles**:
+  - `.search-highlight`: Yellow background (#fff3cd) for matching cells
+  - `.search-highlight-row`: Yellow background with left border for matching rows
+  - `.search-highlight-store`: Yellow background with left border for matching stores
+  - Smooth transitions for highlight appearance
+  
+- **Responsive Improvements**:
+  - Global `overflow-x: hidden` to prevent horizontal scrolling
+  - Flexible container widths using `width: auto` and `max-width: 100%`
+  - Viewport-based padding and margins using `clamp()`
+  - Mobile-friendly vertical stacking
+  - Proper `box-sizing: border-box` for all elements
+
+#### JavaScript Enhancements
+- **Debounced Search**: 300ms delay after user stops typing
+- **Immediate Clear**: Submits immediately when search field becomes empty
+- **Key Event Handling**: Proper handling of backspace and delete keys
+- **Submission Flag**: Prevents duplicate form submissions with `isSubmitting` flag
+- **Highlighting Logic**: 
+  - Case-insensitive matching
+  - Multiple element highlighting (names, descriptions, rows, stores)
+  - Dynamic style application
+
 ## 📄 License
 
 This project is part of a group project for educational purposes.
@@ -814,5 +1007,5 @@ Developed as part of a group project, porting the iOS Store Price List app conce
 
 ---
 
-**Last Updated**: Based on changes made to align with iOS app concept, fix account creation and product ownership issues (Part 1), implement form validation with UI redesign (Part 2), and add store profile completion requirement with top-right popup notifications and comprehensive dashboard UI/UX improvements (Part 3).
+**Last Updated**: Based on changes made to align with iOS app concept, fix account creation and product ownership issues (Part 1), implement form validation with UI redesign (Part 2), add store profile completion requirement with top-right popup notifications and comprehensive dashboard UI/UX improvements (Part 3), and add comprehensive search functionality with real-time filtering, highlighting, store name search, and responsive design improvements matching the landing page (Part 4).
 

@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.db.models import Q
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -14,16 +15,38 @@ from .models import StoreProfile, Inventory
 
 def home(request):
     # Don't logout automatically - allow guest users to view stores
-    if request.user.is_authenticated:
-        # Logged in users see all stores but can only edit their own
-        store_list = StoreProfile.objects.all()
-        inventory_list = Inventory.objects.all()
-    else:
-        # Guest users can view all stores and products
-        store_list = StoreProfile.objects.all()
-        inventory_list = Inventory.objects.all()
+    store_list = StoreProfile.objects.all()
+    inventory_list = Inventory.objects.all()
     
-    return render(request, 'home.html', {'store_list': store_list, 'inventory_list': inventory_list})
+    # Handle search query
+    search_query = request.GET.get('search', '').strip()
+    if search_query:
+        # Filter products by name or description (case-insensitive)
+        inventory_list = Inventory.objects.filter(
+            Q(product_name__icontains=search_query) | 
+            Q(product_description__icontains=search_query)
+        )
+        # Get unique stores that have matching products OR matching store names
+        matching_store_ids = inventory_list.values_list('store_profile_id', flat=True).distinct()
+        # Also find stores with matching store names
+        matching_stores_by_name = StoreProfile.objects.filter(
+            Q(store_name__icontains=search_query)
+        )
+        matching_store_ids_by_name = matching_stores_by_name.values_list('id', flat=True).distinct()
+        # Combine both sets of store IDs
+        all_matching_store_ids = set(matching_store_ids) | set(matching_store_ids_by_name)
+        store_list = StoreProfile.objects.filter(id__in=all_matching_store_ids)
+        
+        # If searching by store name, also include all products from those stores
+        if matching_stores_by_name.exists():
+            additional_products = Inventory.objects.filter(store_profile__in=matching_stores_by_name)
+            inventory_list = inventory_list | additional_products
+    
+    return render(request, 'home.html', {
+        'store_list': store_list, 
+        'inventory_list': inventory_list,
+        'search_query': search_query
+    })
 
 
 def logoutPage(request):
@@ -132,6 +155,15 @@ def dashboard(request):
     # Only show products that belong to this user's store
     products = Inventory.objects.filter(store_profile=store_profile)
     
+    # Handle search query for inventory
+    search_query = request.GET.get('search', '').strip()
+    if search_query:
+        # Filter products by name or description (case-insensitive)
+        products = products.filter(
+            Q(product_name__icontains=search_query) | 
+            Q(product_description__icontains=search_query)
+        )
+    
     # Check if store profile is complete (matching iOS app logic)
     def is_store_complete(profile):
         """Check if all required fields are filled and email is valid"""
@@ -195,7 +227,8 @@ def dashboard(request):
     context = {
         'store_profile': store_profile,
         'products': products,
-        'is_store_complete': is_complete
+        'is_store_complete': is_complete,
+        'search_query': search_query
     }
     return render(request, 'dashboard.html', context)
 

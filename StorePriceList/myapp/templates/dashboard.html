@@ -12,19 +12,32 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
     
     <style>
+        /* Global Responsive Styles - Matching home.html */
+        html, body {
+            width: 100% !important;
+            max-width: 100% !important;
+            overflow-x: hidden !important;
+            box-sizing: border-box;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
         /* Incomplete Form Alert */
         .incomplete-form-alert {
             background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
             border: 2px solid #ffc107;
             border-left: 5px solid #ff9800;
             border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 25px;
+            padding: clamp(15px, 2.5vw, 20px);
+            margin-bottom: clamp(15px, 3vw, 25px);
             display: flex;
             align-items: flex-start;
             box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
             animation: slideDown 0.5s ease-out;
             position: relative;
+            flex-wrap: wrap;
         }
         
         @keyframes slideDown {
@@ -50,10 +63,11 @@
         }
         
         .alert-icon {
-            font-size: 32px;
+            font-size: clamp(24px, 4vw, 32px);
             color: #ff9800;
-            margin-right: 15px;
+            margin-right: clamp(10px, 2vw, 15px);
             animation: pulse 2s infinite;
+            flex-shrink: 0;
         }
         
         @keyframes pulse {
@@ -67,29 +81,30 @@
         
         .alert-content {
             flex: 1;
+            min-width: 200px;
         }
         
         .alert-content h3 {
-            margin: 0 0 8px 0;
+            margin: 0 0 clamp(6px, 1vw, 8px) 0;
             color: #856404;
-            font-size: 18px;
+            font-size: clamp(16px, 2.5vw, 18px);
             font-weight: bold;
         }
         
         .alert-content p {
-            margin: 0 0 12px 0;
+            margin: 0 0 clamp(8px, 1.5vw, 12px) 0;
             color: #856404;
-            font-size: 14px;
+            font-size: clamp(12px, 2vw, 14px);
             line-height: 1.5;
         }
         
         .missing-fields-list {
             background: rgba(255, 255, 255, 0.7);
-            padding: 10px 15px;
+            padding: clamp(8px, 1.5vw, 10px) clamp(12px, 2vw, 15px);
             border-radius: 6px;
-            font-size: 13px;
+            font-size: clamp(11px, 1.8vw, 13px);
             color: #856404;
-            margin-top: 10px;
+            margin-top: clamp(8px, 1.5vw, 10px);
         }
         
         .missing-fields-list strong {
@@ -100,12 +115,13 @@
             background: transparent;
             border: none;
             color: #856404;
-            font-size: 20px;
+            font-size: clamp(18px, 3vw, 20px);
             cursor: pointer;
-            padding: 5px;
-            margin-left: 10px;
+            padding: clamp(4px, 0.8vw, 5px);
+            margin-left: clamp(8px, 1.5vw, 10px);
             opacity: 0.7;
             transition: opacity 0.2s;
+            flex-shrink: 0;
         }
         
         .alert-close:hover {
@@ -115,23 +131,24 @@
         /* Notification Container */
         .notification-container {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: clamp(15px, 3vw, 20px);
+            right: clamp(10px, 2vw, 20px);
             z-index: 10000;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            max-width: 400px;
+            gap: clamp(8px, 1.5vw, 10px);
+            max-width: min(400px, 90vw);
+            width: auto;
         }
         
         .notification {
             background: #fff;
             border-radius: 8px;
-            padding: 15px 20px;
+            padding: clamp(12px, 2vw, 15px) clamp(15px, 2.5vw, 20px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: clamp(10px, 2vw, 12px);
             animation: slideInRight 0.3s ease-out;
             border-left: 4px solid #007bff;
         }
@@ -145,8 +162,9 @@
         }
         
         .notification-icon {
-            font-size: 20px;
+            font-size: clamp(16px, 3vw, 20px);
             color: #007bff;
+            flex-shrink: 0;
         }
         
         .notification.success .notification-icon {
@@ -160,14 +178,16 @@
         .notification-content {
             flex: 1;
             color: #333;
-            font-size: 14px;
+            font-size: clamp(12px, 2vw, 14px);
+            word-wrap: break-word;
         }
         
         .notification-close {
             cursor: pointer;
-            font-size: 20px;
+            font-size: clamp(16px, 3vw, 20px);
             color: #999;
             transition: color 0.3s;
+            flex-shrink: 0;
         }
         
         .notification-close:hover {
@@ -187,43 +207,50 @@
         
         /* Compact Form Field Styling */
         .form-field-wrapper {
-            margin-bottom: 12px;
+            margin-bottom: clamp(10px, 1.5vw, 12px);
             position: relative;
         }
         
         #storeProfileForm {
-            margin-bottom: 20px !important;
-            padding-bottom: 10px !important;
-            max-width: 800px;
+            margin-bottom: clamp(15px, 2vw, 20px) !important;
+            padding-bottom: clamp(8px, 1vw, 10px) !important;
+            max-width: min(800px, 100%) !important;
+            width: 100% !important;
             margin-left: auto;
             margin-right: auto;
+            padding-left: clamp(5px, 1vw, 10px);
+            padding-right: clamp(5px, 1vw, 10px);
+            box-sizing: border-box;
         }
         
         .saveprofile {
-            margin-bottom: 10px !important;
-            margin-top: 15px;
+            margin-bottom: clamp(8px, 1vw, 10px) !important;
+            margin-top: clamp(12px, 2vw, 15px);
+            padding: clamp(10px, 1.5vw, 12px) clamp(20px, 3vw, 30px) !important;
+            font-size: clamp(14px, 2vw, 16px) !important;
         }
         
         .form-field-wrapper label {
             display: block;
             font-weight: 600;
-            margin-bottom: 5px;
+            margin-bottom: clamp(4px, 0.8vw, 5px);
             color: #333;
-            font-size: 13px;
+            font-size: clamp(12px, 1.8vw, 13px);
         }
         
         .required-star {
             color: #dc3545;
             font-weight: bold;
             margin-left: 3px;
+            font-size: clamp(12px, 1.8vw, 13px);
         }
         
         .form-field {
             width: 100%;
-            padding: 10px 12px;
+            padding: clamp(8px, 1.5vw, 10px) clamp(10px, 1.8vw, 12px);
             border: 2px solid #e0e0e0;
             border-radius: 6px;
-            font-size: 14px;
+            font-size: clamp(13px, 2vw, 14px);
             transition: all 0.3s ease;
             box-sizing: border-box;
         }
@@ -271,9 +298,60 @@
         }
         
         textarea.form-field {
-            min-height: 80px;
+            min-height: clamp(70px, 10vw, 80px);
             resize: vertical;
             font-family: inherit;
+        }
+        
+        /* Search Bar Styling */
+        .search-container {
+            margin-bottom: 20px;
+        }
+        
+        .search-btn:hover {
+            background: linear-gradient(135deg, #0056b3 0%, #004085 100%) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+        }
+        
+        .clear-search-btn:hover {
+            background: #5a6268 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+        }
+        
+        @media screen and (max-width: 768px) {
+            .search-form {
+                flex-direction: column !important;
+            }
+            
+            .search-form > div {
+                width: 100% !important;
+                min-width: 100% !important;
+            }
+            
+            .search-btn, .clear-search-btn {
+                width: 100%;
+            }
+        }
+        
+        /* Search Highlight Styles */
+        .search-highlight {
+            transition: background-color 0.3s ease;
+        }
+        
+        .search-highlight-row {
+            transition: background-color 0.3s ease;
+            border-left: 3px solid #ffc107;
+        }
+        
+        .InventoryContent table tbody tr.search-highlight-row:hover {
+            background-color: #fff3cd !important;
+        }
+        
+        .InventoryContent table tbody td.search-highlight {
+            background-color: #fff3cd !important;
+            font-weight: 600;
         }
         
         /* Save Button Enhancement */
@@ -303,19 +381,21 @@
             cursor: not-allowed !important;
         }
         
-        /* Responsive Header Styles */
+        /* Responsive Header Styles - Matching home.html */
         header {
             position: relative;
-            width: 100%;
+            width: 100% !important;
+            max-width: 100% !important;
             background: linear-gradient(135deg, #65B741 0%, #4a9d2e 100%);
-            padding: 20px;
+            padding: clamp(12px, 2vw, 20px);
             box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
             display: flex;
             flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
-            gap: 15px;
+            gap: clamp(10px, 2vw, 15px);
             border-bottom: 3px solid rgba(255, 255, 255, 0.2);
+            box-sizing: border-box;
         }
         
         .accountContainer {
@@ -382,44 +462,51 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         
-        /* Responsive Section Styles */
+        /* Responsive Section Styles - Matching home.html */
         section {
-            width: 100%;
-            padding: 30px 15px 50px 15px !important;
-            min-height: calc(100vh - 200px);
+            width: auto !important;
+            min-height: auto !important;
+            height: auto !important;
+            padding: clamp(15px, 2vw, 20px) !important;
             box-sizing: border-box;
             position: relative;
             margin-bottom: 0;
+            overflow-x: hidden;
         }
         
         .divSectionDashboard {
-            max-width: 1200px;
+            width: auto !important;
+            max-width: 100% !important;
             margin: 0 auto;
-            width: 100%;
             position: relative;
             clear: both;
             overflow: hidden;
+            padding: 0;
+            box-sizing: border-box;
         }
         
-        /* Responsive Tab Content */
+        /* Responsive Tab Content - Matching home.html patterns */
         .StoreProfileContent,
         .InventoryContent {
-            padding: 20px !important;
-            width: 100%;
+            padding: clamp(15px, 2vw, 20px) !important;
+            width: 100% !important;
+            max-width: 100% !important;
             box-sizing: border-box;
-            min-height: 400px;
+            min-height: auto !important;
+            height: auto !important;
             margin-bottom: 0;
+            overflow-x: auto;
         }
         
         .StoreProfileContent h1,
         .InventoryContent h2 {
-            font-size: clamp(18px, 2.5vw, 24px);
-            margin-bottom: 15px;
+            font-size: clamp(16px, 3vw, 24px);
+            margin-bottom: clamp(10px, 2vw, 15px);
             margin-top: 0;
         }
         
         .StoreProfileContent {
-            padding: 15px !important;
+            padding: clamp(10px, 2vw, 15px) !important;
         }
         
         /* Responsive Table */
@@ -430,10 +517,13 @@
         }
         
         .InventoryContent table {
-            width: 100%;
-            min-width: 600px;
+            width: 100% !important;
+            max-width: 100% !important;
+            min-width: auto !important;
             border-collapse: collapse;
             display: table !important;
+            font-size: clamp(12px, 1.8vw, 14px);
+            box-sizing: border-box;
         }
         
         .InventoryContent table thead {
@@ -450,15 +540,16 @@
         
         .InventoryContent table th,
         .InventoryContent table td {
-            padding: 12px 8px;
+            padding: clamp(8px, 1.5vw, 12px) clamp(6px, 1vw, 8px);
             text-align: left;
-            font-size: clamp(12px, 2vw, 14px);
+            font-size: clamp(11px, 1.8vw, 14px);
             display: table-cell !important;
         }
         
         .InventoryContent table th {
             background-color: #f2f2f2;
             font-weight: 600;
+            font-size: clamp(12px, 2vw, 14px);
         }
         
         .InventoryContent table td {
@@ -471,9 +562,10 @@
         
         /* Responsive Action Buttons */
         .edit-btn, .del-btn, .add-btn {
-            padding: 8px 15px;
-            font-size: clamp(12px, 2vw, 14px);
+            padding: clamp(6px, 1.2vw, 8px) clamp(10px, 2vw, 15px);
+            font-size: clamp(11px, 1.8vw, 14px);
             white-space: nowrap;
+            margin: clamp(2px, 0.5vw, 4px);
         }
         
         /* Responsive Modal */
@@ -516,11 +608,11 @@
         
         .tabButton {
             flex: 1 !important;
-            min-width: 150px !important;
+            min-width: clamp(120px, 20vw, 150px) !important;
             width: auto !important;
-            height: 50px !important;
-            padding: 10px 15px !important;
-            font-size: clamp(14px, 2vw, 16px) !important;
+            height: clamp(45px, 6vw, 50px) !important;
+            padding: clamp(8px, 1.5vw, 10px) clamp(12px, 2vw, 15px) !important;
+            font-size: clamp(12px, 2vw, 16px) !important;
             white-space: nowrap !important;
             display: block !important;
             text-align: center !important;
@@ -529,7 +621,7 @@
         .tabContent {
             margin-left: 0 !important;
             width: 100% !important;
-            padding: 15px !important;
+            padding: clamp(10px, 2vw, 15px) !important;
             display: none;
         }
         
@@ -549,11 +641,11 @@
         
         .modal-content {
             background-color: #fefefe !important;
-            margin: 5% auto !important;
-            padding: 20px !important;
+            margin: clamp(2%, 5vw, 5%) auto !important;
+            padding: clamp(15px, 3vw, 20px) !important;
             border: 1px solid #888 !important;
             border-radius: 10px !important;
-            max-width: 600px !important;
+            max-width: min(600px, 90vw) !important;
             width: 90% !important;
             box-sizing: border-box !important;
             position: relative !important;
@@ -641,16 +733,29 @@
             }
             
             .incomplete-form-alert {
-                padding: 15px;
-                margin-bottom: 20px;
+                padding: clamp(12px, 2vw, 15px);
+                margin-bottom: clamp(15px, 2.5vw, 20px);
+                flex-direction: column;
+            }
+            
+            .alert-icon {
+                margin-right: 0;
+                margin-bottom: clamp(8px, 1.5vw, 10px);
+            }
+            
+            .alert-close {
+                position: absolute;
+                top: clamp(8px, 1.5vw, 10px);
+                right: clamp(8px, 1.5vw, 10px);
+                margin-left: 0;
             }
             
             .alert-content h3 {
-                font-size: 16px;
+                font-size: clamp(14px, 2.5vw, 16px);
             }
             
             .alert-content p {
-                font-size: 13px;
+                font-size: clamp(11px, 2vw, 13px);
             }
             
             .form-field {
@@ -659,8 +764,8 @@
             
             .modal-content {
                 max-width: 95% !important;
-                margin: 10% auto !important;
-                padding: 15px !important;
+                margin: clamp(5%, 8vw, 10%) auto !important;
+                padding: clamp(12px, 2.5vw, 15px) !important;
             }
             
             .navigationBar {
@@ -670,111 +775,178 @@
             .tabButton {
                 width: 100% !important;
                 min-width: 100% !important;
+                height: clamp(40px, 6vw, 45px) !important;
             }
             
             .tabContent {
-                padding: 10px !important;
+                padding: clamp(8px, 1.5vw, 10px) !important;
             }
             
             .StoreProfileContent,
             .InventoryContent {
-                padding: 15px !important;
+                padding: clamp(12px, 2vw, 15px) !important;
             }
             
             section {
-                padding: 20px 15px 50px 15px !important;
+                padding: clamp(15px, 2.5vw, 20px) clamp(10px, 1.5vw, 15px) clamp(30px, 4vw, 50px) clamp(10px, 1.5vw, 15px) !important;
             }
             
             #storeProfileForm {
-                margin-bottom: 30px !important;
-                padding-bottom: 20px !important;
+                margin-bottom: clamp(20px, 3vw, 30px) !important;
+                padding-bottom: clamp(15px, 2.5vw, 20px) !important;
             }
             
             .slide-content {
                 max-width: 95% !important;
-                padding: 15px !important;
+                padding: clamp(12px, 2.5vw, 15px) !important;
+            }
+            
+            .InventoryContent table {
+                min-width: auto !important;
+                width: 100% !important;
+            }
+            
+            .InventoryContent table th,
+            .InventoryContent table td {
+                padding: clamp(6px, 1.2vw, 8px) clamp(4px, 0.8vw, 6px);
+                font-size: clamp(10px, 1.6vw, 12px);
+            }
+            
+            .edit-btn, .del-btn, .add-btn {
+                padding: clamp(5px, 1vw, 6px) clamp(8px, 1.5vw, 10px);
+                font-size: clamp(10px, 1.6vw, 12px);
+            }
+            
+            .divSectionDashboard {
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 0 !important;
+            }
+            
+            section {
+                padding: clamp(10px, 1.5vw, 15px) !important;
             }
         }
         
         @media screen and (max-width: 480px) {
             header {
-                padding: 10px;
+                padding: clamp(8px, 2vw, 10px);
             }
             
             #hello-msg {
-                font-size: 14px;
+                font-size: clamp(12px, 3vw, 14px);
             }
             
             .divTitleDashboard h1 {
-                font-size: 18px;
+                font-size: clamp(16px, 4vw, 18px);
             }
             
             .logoutButton {
-                padding: 8px 12px;
-                font-size: 14px;
+                padding: clamp(6px, 1.5vw, 8px) clamp(10px, 2.5vw, 12px);
+                font-size: clamp(12px, 3vw, 14px);
             }
             
             .StoreProfileContent,
             .InventoryContent {
-                padding: 10px !important;
+                padding: clamp(8px, 2vw, 10px) !important;
             }
             
             section {
-                padding: 20px 10px 50px 10px !important;
+                padding: clamp(15px, 2.5vw, 20px) clamp(8px, 2vw, 10px) clamp(30px, 4vw, 50px) clamp(8px, 2vw, 10px) !important;
             }
             
             #storeProfileForm {
-                margin-bottom: 30px !important;
-                padding-bottom: 20px !important;
+                margin-bottom: clamp(20px, 3vw, 30px) !important;
+                padding-bottom: clamp(15px, 2.5vw, 20px) !important;
             }
             
             .incomplete-form-alert {
                 flex-direction: column;
                 text-align: center;
+                padding: clamp(10px, 2.5vw, 12px) !important;
             }
             
             .alert-icon {
                 margin-right: 0;
-                margin-bottom: 10px;
+                margin-bottom: clamp(8px, 2vw, 10px);
+                font-size: clamp(20px, 5vw, 24px);
             }
             
             .alert-close {
                 position: absolute;
-                top: 10px;
-                right: 10px;
+                top: clamp(8px, 2vw, 10px);
+                right: clamp(8px, 2vw, 10px);
+                font-size: clamp(16px, 4vw, 18px);
+            }
+            
+            .alert-content h3 {
+                font-size: clamp(14px, 3.5vw, 16px);
+            }
+            
+            .alert-content p {
+                font-size: clamp(11px, 2.8vw, 13px);
             }
             
             .InventoryContent table {
-                min-width: 500px;
+                min-width: auto !important;
+                width: 100% !important;
             }
             
             .InventoryContent table th,
             .InventoryContent table td {
-                padding: 8px 5px;
-                font-size: 12px;
+                padding: clamp(6px, 1.5vw, 8px) clamp(4px, 1vw, 5px);
+                font-size: clamp(10px, 2.5vw, 12px);
             }
             
             .edit-btn, .del-btn, .add-btn {
-                padding: 6px 10px;
-                font-size: 12px;
+                padding: clamp(5px, 1.2vw, 6px) clamp(8px, 2vw, 10px);
+                font-size: clamp(10px, 2.5vw, 12px);
             }
             
             .modal-content {
-                max-width: 98% !important;
-                margin: 5% auto !important;
-                padding: 10px !important;
+                max-width: 95% !important;
+                margin: clamp(3%, 5vw, 5%) auto !important;
+                padding: clamp(8px, 2vw, 10px) !important;
             }
             
             .slide-content {
-                max-width: 98% !important;
-                padding: 10px !important;
+                max-width: 95% !important;
+                padding: clamp(8px, 2vw, 10px) !important;
+            }
+            
+            .form-field {
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+            
+            .divSectionDashboard {
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 0 !important;
+            }
+            
+            section {
+                padding: clamp(10px, 1.5vw, 15px) !important;
+            }
+            
+            #storeProfileForm {
+                max-width: 100% !important;
+                width: 100% !important;
             }
         }
         
-        /* Ensure no float conflicts */
+        /* Ensure no float conflicts - Matching home.html */
         .divSectionDashboard {
             clear: both;
             overflow: hidden;
+            width: auto !important;
+            max-width: 100% !important;
+        }
+        
+        /* Prevent horizontal overflow */
+        main, .main-content {
+            width: 100% !important;
+            max-width: 100% !important;
+            overflow-x: hidden !important;
         }
         
         /* Fix any z-index conflicts */
@@ -1151,6 +1323,115 @@
             showNotification('{{ message|escapejs }}', '{{ message.tags|default:"info" }}');
         {% endfor %}
     {% endif %}
+    
+    // Real-time search for inventory
+    document.addEventListener('DOMContentLoaded', function() {
+        const inventorySearchInput = document.getElementById('inventorySearchInput');
+        const inventorySearchForm = document.getElementById('inventorySearchForm');
+        let searchTimeout;
+        let isSubmitting = false;
+        
+        if (inventorySearchInput) {
+            inventorySearchInput.addEventListener('input', function(e) {
+                clearTimeout(searchTimeout);
+                
+                // If input is empty, submit immediately to clear search
+                if (this.value.trim() === '') {
+                    if (!isSubmitting) {
+                        isSubmitting = true;
+                        inventorySearchForm.submit();
+                    }
+                    return;
+                }
+                
+                // Debounce: wait 300ms after user stops typing
+                searchTimeout = setTimeout(function() {
+                    if (!isSubmitting) {
+                        isSubmitting = true;
+                        inventorySearchForm.submit();
+                    }
+                }, 300);
+            });
+            
+            // Handle backspace and delete keys properly - don't interfere with normal deletion
+            inventorySearchInput.addEventListener('keydown', function(e) {
+                // Don't prevent default behavior for backspace/delete
+                if (e.key === 'Backspace' || e.key === 'Delete') {
+                    clearTimeout(searchTimeout);
+                }
+            });
+            
+            // Check if field is empty after keyup (after deletion happens)
+            inventorySearchInput.addEventListener('keyup', function(e) {
+                if (e.key === 'Backspace' || e.key === 'Delete') {
+                    clearTimeout(searchTimeout);
+                    // If field becomes empty, submit immediately
+                    if (this.value.trim() === '') {
+                        if (!isSubmitting) {
+                            isSubmitting = true;
+                            inventorySearchForm.submit();
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Reset submitting flag after form submission
+        if (inventorySearchForm) {
+            inventorySearchForm.addEventListener('submit', function() {
+                isSubmitting = false;
+            });
+        }
+        
+        // Highlight matching products
+        const searchQuery = "{{ search_query|escapejs }}";
+        if (searchQuery) {
+            highlightInventorySearchResults(searchQuery);
+        }
+    });
+    
+    function highlightInventorySearchResults(query) {
+        if (!query) return;
+        
+        const queryLower = query.toLowerCase();
+        const table = document.querySelector('.InventoryContent table');
+        if (!table) return;
+        
+        const rows = table.querySelectorAll('tbody tr');
+        const productNameCells = table.querySelectorAll('tbody td:first-child');
+        const productDescCells = table.querySelectorAll('tbody td:nth-child(2)');
+        
+        // Highlight product names
+        productNameCells.forEach(function(cell) {
+            const text = cell.textContent;
+            const textLower = text.toLowerCase();
+            if (textLower.includes(queryLower)) {
+                cell.style.backgroundColor = '#fff3cd';
+                cell.style.fontWeight = '600';
+                cell.classList.add('search-highlight');
+            }
+        });
+        
+        // Highlight product descriptions
+        productDescCells.forEach(function(cell) {
+            const text = cell.textContent;
+            const textLower = text.toLowerCase();
+            if (textLower.includes(queryLower)) {
+                cell.style.backgroundColor = '#fff3cd';
+                cell.style.fontWeight = '600';
+                cell.classList.add('search-highlight');
+            }
+        });
+        
+        // Highlight entire rows that match
+        rows.forEach(function(row) {
+            const rowText = row.textContent.toLowerCase();
+            if (rowText.includes(queryLower)) {
+                row.style.backgroundColor = '#fff9e6';
+                row.classList.add('search-highlight-row');
+            }
+        });
+    }
 </script>
 {% endblock %}
 
@@ -1255,6 +1536,37 @@
             <div id="Inventory" class="tabContent">
                <div class="InventoryContent">
                     <h2>Products</h2>
+                    
+                    <!-- Search Bar -->
+                    <div class="search-container" style="max-width: min(800px, 100%); margin: clamp(15px, 2vw, 20px) auto; padding: 0 clamp(10px, 2vw, 20px); box-sizing: border-box;">
+                        <form method="GET" action="{% url 'dashboard' %}" id="inventorySearchForm" class="search-form" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                            <div style="flex: 1; position: relative; min-width: 200px;">
+                                <input 
+                                    type="text" 
+                                    name="search" 
+                                    id="inventorySearchInput"
+                                    placeholder="Search products by name or description..." 
+                                    value="{{ search_query }}"
+                                    class="search-input"
+                                    autocomplete="off"
+                                    style="width: 100%; padding: 10px 40px 10px 15px; border: 2px solid #e0e0e0; border-radius: 20px; font-size: 14px; outline: none; transition: all 0.3s ease; box-sizing: border-box;"
+                                    onfocus="this.style.borderColor='#007bff'; this.style.boxShadow='0 0 0 3px rgba(0, 123, 255, 0.1)'"
+                                    onblur="this.style.borderColor='#e0e0e0'; this.style.boxShadow='none'"
+                                >
+                                <i class="fas fa-search" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #999; font-size: 14px; pointer-events: none;"></i>
+                            </div>
+                            {% if search_query %}
+                            <a href="{% url 'dashboard' %}" class="clear-search-btn" style="padding: 10px 18px; background: #6c757d; color: white; border: none; border-radius: 20px; cursor: pointer; font-size: 14px; text-decoration: none; transition: all 0.3s ease; white-space: nowrap; flex-shrink: 0;">
+                                <i class="fas fa-times"></i> Clear
+                            </a>
+                            {% endif %}
+                        </form>
+                        {% if search_query %}
+                        <p style="text-align: center; margin-top: 10px; color: #666; font-size: 13px;">
+                            <i class="fas fa-info-circle"></i> Showing results for: <strong>"{{ search_query }}"</strong>
+                        </p>
+                        {% endif %}
+                    </div>
 
                     <table>
                         <thead>

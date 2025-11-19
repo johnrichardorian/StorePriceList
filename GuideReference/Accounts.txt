@@ -2,12 +2,15 @@
 	admin
 	admin
 
-* Users
-	john
+* Users - PS, yung ibang account need dugsungan ng @gmail.com
+	john@gmail.com
 	salunesbabayaran
 
-	richard
+	richard@gmail.com
 	salunesbabayaran
 
-	orian
+	orian@gmail.com
 	salunesbabayaran
+
+	johnrichardorian@gmail.com
+	puronalangutang
