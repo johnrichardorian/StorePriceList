@@ -8,34 +8,1172 @@
     <link rel="stylesheet" href="{% static 'css/navigationBarStyles.css' %}">
     <link rel="stylesheet" href="{% static 'css/storeProfileContentStyles.css' %}">
     <link rel="stylesheet" href="{% static 'css/inventoryContentStyles.css' %}">
-    <link rel="stylesheet" href="{% static 'css/footerStyles.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+    
+    <style>
+        /* Incomplete Form Alert */
+        .incomplete-form-alert {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border: 2px solid #ffc107;
+            border-left: 5px solid #ff9800;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: flex-start;
+            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+            animation: slideDown 0.5s ease-out;
+            position: relative;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+        
+        .alert-icon {
+            font-size: 32px;
+            color: #ff9800;
+            margin-right: 15px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+        
+        .alert-content {
+            flex: 1;
+        }
+        
+        .alert-content h3 {
+            margin: 0 0 8px 0;
+            color: #856404;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .alert-content p {
+            margin: 0 0 12px 0;
+            color: #856404;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .missing-fields-list {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #856404;
+            margin-top: 10px;
+        }
+        
+        .missing-fields-list strong {
+            color: #d68910;
+        }
+        
+        .alert-close {
+            background: transparent;
+            border: none;
+            color: #856404;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px;
+            margin-left: 10px;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        
+        .alert-close:hover {
+            opacity: 1;
+        }
+        
+        /* Notification Container */
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 400px;
+        }
+        
+        .notification {
+            background: #fff;
+            border-radius: 8px;
+            padding: 15px 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideInRight 0.3s ease-out;
+            border-left: 4px solid #007bff;
+        }
+        
+        .notification.success {
+            border-left-color: #28a745;
+        }
+        
+        .notification.error {
+            border-left-color: #dc3545;
+        }
+        
+        .notification-icon {
+            font-size: 20px;
+            color: #007bff;
+        }
+        
+        .notification.success .notification-icon {
+            color: #28a745;
+        }
+        
+        .notification.error .notification-icon {
+            color: #dc3545;
+        }
+        
+        .notification-content {
+            flex: 1;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .notification-close {
+            cursor: pointer;
+            font-size: 20px;
+            color: #999;
+            transition: color 0.3s;
+        }
+        
+        .notification-close:hover {
+            color: #333;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Compact Form Field Styling */
+        .form-field-wrapper {
+            margin-bottom: 12px;
+            position: relative;
+        }
+        
+        #storeProfileForm {
+            margin-bottom: 20px !important;
+            padding-bottom: 10px !important;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .saveprofile {
+            margin-bottom: 10px !important;
+            margin-top: 15px;
+        }
+        
+        .form-field-wrapper label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+            font-size: 13px;
+        }
+        
+        .required-star {
+            color: #dc3545;
+            font-weight: bold;
+            margin-left: 3px;
+        }
+        
+        .form-field {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        .form-field:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+        
+        .form-field.field-invalid {
+            border-color: #dc3545;
+            background-color: #fff5f5;
+            animation: shake 0.3s;
+        }
+        
+        .form-field.field-valid {
+            border-color: #28a745;
+            background-color: #f0fff4;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .field-error {
+            display: none;
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 5px;
+            padding-left: 5px;
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .field-error::before {
+            content: "⚠ ";
+            margin-right: 3px;
+        }
+        
+        textarea.form-field {
+            min-height: 80px;
+            resize: vertical;
+            font-family: inherit;
+        }
+        
+        /* Save Button Enhancement */
+        .saveprofile {
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .saveprofile i {
+            font-size: 16px;
+        }
+        
+        .saveprofile:not(.disabled):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+        }
+        
+        .saveprofile.disabled {
+            background-color: #6c757d !important;
+            border-color: #6c757d !important;
+            cursor: not-allowed !important;
+        }
+        
+        /* Responsive Header Styles */
+        header {
+            position: relative;
+            width: 100%;
+            background: linear-gradient(135deg, #65B741 0%, #4a9d2e 100%);
+            padding: 20px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            border-bottom: 3px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .accountContainer {
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        #hello-msg {
+            font-size: clamp(14px, 2.5vw, 20px);
+            color: #FBF6EE;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .divTitleDashboard {
+            flex: 2;
+            text-align: center;
+            min-width: 200px;
+            background-color: transparent !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+        }
+        
+        .divTitleDashboard h1 {
+            font-size: clamp(18px, 4vw, 28px);
+            margin: 0;
+            color: #FBF6EE;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .logoutButtonContainer {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+            min-width: 100px;
+        }
+        
+        .logoutButton {
+            background-color: #FFB534;
+            color: #FBF6EE;
+            border: 2px solid #FBF6EE;
+            border-radius: 10px;
+            padding: 10px 15px;
+            font-size: clamp(14px, 2vw, 18px);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+        
+        .logoutButton i {
+            font-size: clamp(14px, 2vw, 18px);
+        }
+        
+        .logoutButton:hover {
+            background-color: #FBF6EE;
+            color: #FFB534;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Responsive Section Styles */
+        section {
+            width: 100%;
+            padding: 30px 15px 50px 15px !important;
+            min-height: calc(100vh - 200px);
+            box-sizing: border-box;
+            position: relative;
+            margin-bottom: 0;
+        }
+        
+        .divSectionDashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            position: relative;
+            clear: both;
+            overflow: hidden;
+        }
+        
+        /* Responsive Tab Content */
+        .StoreProfileContent,
+        .InventoryContent {
+            padding: 20px !important;
+            width: 100%;
+            box-sizing: border-box;
+            min-height: 400px;
+            margin-bottom: 0;
+        }
+        
+        .StoreProfileContent h1,
+        .InventoryContent h2 {
+            font-size: clamp(18px, 2.5vw, 24px);
+            margin-bottom: 15px;
+            margin-top: 0;
+        }
+        
+        .StoreProfileContent {
+            padding: 15px !important;
+        }
+        
+        /* Responsive Table */
+        .InventoryContent {
+            overflow-x: auto;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .InventoryContent table {
+            width: 100%;
+            min-width: 600px;
+            border-collapse: collapse;
+            display: table !important;
+        }
+        
+        .InventoryContent table thead {
+            display: table-header-group !important;
+        }
+        
+        .InventoryContent table tbody {
+            display: table-row-group !important;
+        }
+        
+        .InventoryContent table tr {
+            display: table-row !important;
+        }
+        
+        .InventoryContent table th,
+        .InventoryContent table td {
+            padding: 12px 8px;
+            text-align: left;
+            font-size: clamp(12px, 2vw, 14px);
+            display: table-cell !important;
+        }
+        
+        .InventoryContent table th {
+            background-color: #f2f2f2;
+            font-weight: 600;
+        }
+        
+        .InventoryContent table td {
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .InventoryContent table tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        /* Responsive Action Buttons */
+        .edit-btn, .del-btn, .add-btn {
+            padding: 8px 15px;
+            font-size: clamp(12px, 2vw, 14px);
+            white-space: nowrap;
+        }
+        
+        /* Responsive Modal */
+        .modal-content {
+            max-width: 90%;
+            margin: 5% auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        /* Override conflicting styles from external CSS */
+        .accountContainer {
+            position: relative !important;
+            top: auto !important;
+            left: auto !important;
+        }
+        
+        #hello-msg {
+            position: relative !important;
+            top: auto !important;
+            left: auto !important;
+        }
+        
+        .logoutButtonContainer {
+            position: relative !important;
+            top: auto !important;
+            right: auto !important;
+        }
+        
+        /* Responsive Navigation Bar - Override external CSS */
+        .navigationBar {
+            width: 100% !important;
+            display: flex !important;
+            flex-direction: row !important;
+            margin-bottom: 20px !important;
+            overflow-x: auto !important;
+            float: none !important;
+            z-index: auto !important;
+        }
+        
+        .tabButton {
+            flex: 1 !important;
+            min-width: 150px !important;
+            width: auto !important;
+            height: 50px !important;
+            padding: 10px 15px !important;
+            font-size: clamp(14px, 2vw, 16px) !important;
+            white-space: nowrap !important;
+            display: block !important;
+            text-align: center !important;
+        }
+        
+        .tabContent {
+            margin-left: 0 !important;
+            width: 100% !important;
+            padding: 15px !important;
+            display: none;
+        }
+        
+        /* Override modal styles for better responsiveness */
+        .modal {
+            position: fixed !important;
+            z-index: 10000 !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            overflow: auto !important;
+            background-color: rgba(0,0,0,0.4) !important;
+            padding-top: 0 !important;
+            display: none;
+        }
+        
+        .modal-content {
+            background-color: #fefefe !important;
+            margin: 5% auto !important;
+            padding: 20px !important;
+            border: 1px solid #888 !important;
+            border-radius: 10px !important;
+            max-width: 600px !important;
+            width: 90% !important;
+            box-sizing: border-box !important;
+            position: relative !important;
+        }
+        
+        .close {
+            color: #aaa !important;
+            float: right !important;
+            font-size: 28px !important;
+            font-weight: bold !important;
+            cursor: pointer !important;
+            line-height: 20px !important;
+            position: relative !important;
+            top: auto !important;
+            right: auto !important;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: #000 !important;
+        }
+        
+        /* Override slide navigation for responsiveness */
+        .slide-nav {
+            position: fixed !important;
+            z-index: 9999 !important;
+            padding: 20px !important;
+        }
+        
+        .slide-content {
+            min-width: auto !important;
+            max-width: 90% !important;
+            width: auto !important;
+            margin: 20px auto !important;
+            box-sizing: border-box !important;
+            position: relative !important;
+        }
+        
+        .close-btn {
+            position: absolute !important;
+            top: 20px !important;
+            right: 20px !important;
+            z-index: 10000 !important;
+        }
+        
+        /* Ensure proper stacking context */
+        .divSectionDashboard > * {
+            position: relative;
+        }
+        
+        /* Fix any overflow issues */
+        .StoreProfileContent,
+        .InventoryContent {
+            overflow: visible;
+            position: relative;
+        }
+        
+        /* Media Queries for Mobile Devices */
+        @media screen and (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 15px;
+            }
+            
+            .accountContainer {
+                order: 1;
+                text-align: center;
+                margin-bottom: 10px;
+            }
+            
+            .divTitleDashboard {
+                order: 2;
+                margin-bottom: 10px;
+            }
+            
+            .logoutButtonContainer {
+                order: 3;
+                justify-content: center;
+            }
+            
+            .logoutButton {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .incomplete-form-alert {
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+            
+            .alert-content h3 {
+                font-size: 16px;
+            }
+            
+            .alert-content p {
+                font-size: 13px;
+            }
+            
+            .form-field {
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+            
+            .modal-content {
+                max-width: 95% !important;
+                margin: 10% auto !important;
+                padding: 15px !important;
+            }
+            
+            .navigationBar {
+                flex-direction: column !important;
+            }
+            
+            .tabButton {
+                width: 100% !important;
+                min-width: 100% !important;
+            }
+            
+            .tabContent {
+                padding: 10px !important;
+            }
+            
+            .StoreProfileContent,
+            .InventoryContent {
+                padding: 15px !important;
+            }
+            
+            section {
+                padding: 20px 15px 50px 15px !important;
+            }
+            
+            #storeProfileForm {
+                margin-bottom: 30px !important;
+                padding-bottom: 20px !important;
+            }
+            
+            .slide-content {
+                max-width: 95% !important;
+                padding: 15px !important;
+            }
+        }
+        
+        @media screen and (max-width: 480px) {
+            header {
+                padding: 10px;
+            }
+            
+            #hello-msg {
+                font-size: 14px;
+            }
+            
+            .divTitleDashboard h1 {
+                font-size: 18px;
+            }
+            
+            .logoutButton {
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+            
+            .StoreProfileContent,
+            .InventoryContent {
+                padding: 10px !important;
+            }
+            
+            section {
+                padding: 20px 10px 50px 10px !important;
+            }
+            
+            #storeProfileForm {
+                margin-bottom: 30px !important;
+                padding-bottom: 20px !important;
+            }
+            
+            .incomplete-form-alert {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .alert-icon {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+            
+            .alert-close {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+            }
+            
+            .InventoryContent table {
+                min-width: 500px;
+            }
+            
+            .InventoryContent table th,
+            .InventoryContent table td {
+                padding: 8px 5px;
+                font-size: 12px;
+            }
+            
+            .edit-btn, .del-btn, .add-btn {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+            
+            .modal-content {
+                max-width: 98% !important;
+                margin: 5% auto !important;
+                padding: 10px !important;
+            }
+            
+            .slide-content {
+                max-width: 98% !important;
+                padding: 10px !important;
+            }
+        }
+        
+        /* Ensure no float conflicts */
+        .divSectionDashboard {
+            clear: both;
+            overflow: hidden;
+        }
+        
+        /* Fix any z-index conflicts */
+        header {
+            z-index: 100;
+            position: relative;
+        }
+        
+        .modal {
+            z-index: 10000 !important;
+        }
+        
+        .slide-nav {
+            z-index: 9999 !important;
+        }
+        
+        /* Ensure body and html are full height */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Main container for flexbox layout */
+        html {
+            height: 100%;
+        }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        
+        main {
+            flex: 1 0 auto;
+            padding-bottom: 0;
+            margin-bottom: 0;
+            position: relative;
+            min-height: calc(100vh - 200px);
+        }
+        
+    </style>
 
 {% endblock %}
 
 {% block script %} 
 <script>
-    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    // Make isStoreComplete globally accessible
+    window.isStoreComplete = {{ is_store_complete|yesno:"true,false" }};
+    const isStoreComplete = window.isStoreComplete;
+    
+    // Get CSRF token safely
+    let csrftoken = '';
+    const csrfElement = document.querySelector('[name=csrfmiddlewaretoken]');
+    if (csrfElement) {
+        csrftoken = csrfElement.value;
+    }
+    
+    // Store Profile validation (matching iOS app)
+    function isValidEmail(email) {
+        const pattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+        return pattern.test(email);
+    }
+    
+    function isFormComplete() {
+        const storeNameEl = document.getElementById('store_name');
+        const addressEl = document.getElementById('address');
+        const zipCodeEl = document.getElementById('zip_code');
+        const phoneEl = document.getElementById('phone');
+        const emailEl = document.getElementById('email_address');
+        const descriptionEl = document.getElementById('description');
+        
+        if (!storeNameEl || !addressEl || !zipCodeEl || !phoneEl || !emailEl || !descriptionEl) {
+            return false;
+        }
+        
+        const storeName = storeNameEl.value.trim();
+        const address = addressEl.value.trim();
+        const zipCode = zipCodeEl.value.trim();
+        const phone = phoneEl.value.trim();
+        const email = emailEl.value.trim();
+        const description = descriptionEl.value.trim();
+        
+        const allFieldsFilled = storeName.length > 0 && address.length > 0 && zipCode.length > 0 && phone.length > 0 && email.length > 0 && description.length > 0;
+        const emailValid = email.length > 0 && isValidEmail(email);
+        
+        const isComplete = allFieldsFilled && emailValid;
+        
+        // Debug logging (can be removed later)
+        if (!isComplete) {
+            console.log('Form incomplete:', {
+                storeName: storeName.length > 0,
+                address: address.length > 0,
+                zipCode: zipCode.length > 0,
+                phone: phone.length > 0,
+                email: email.length > 0,
+                emailValid: emailValid,
+                description: description.length > 0
+            });
+        }
+        
+        return isComplete;
+    }
+    
+    function updateSaveButton() {
+        const saveButton = document.getElementById('saveProfileBtn');
+        const isComplete = isFormComplete();
+        
+        if (saveButton) {
+            // Always remove disabled attribute first
+            saveButton.removeAttribute('disabled');
+            
+            if (isComplete) {
+                saveButton.disabled = false;
+                saveButton.style.opacity = '1';
+                saveButton.style.cursor = 'pointer';
+                saveButton.classList.remove('disabled');
+            } else {
+                saveButton.disabled = true;
+                saveButton.style.opacity = '0.6';
+                saveButton.style.cursor = 'not-allowed';
+                saveButton.classList.add('disabled');
+            }
+        }
+    }
+    
+    function validateField(fieldId, fieldName, value, isEmail = false) {
+        const field = document.getElementById(fieldId);
+        const errorSpan = document.getElementById(fieldId + '_error');
+        const trimmedValue = value.trim();
+        
+        // Remove previous error styling
+        if (field) {
+            field.classList.remove('field-invalid', 'field-valid');
+        }
+        
+        if (!trimmedValue) {
+            if (field) field.classList.add('field-invalid');
+            if (errorSpan) {
+                errorSpan.textContent = fieldName + ' is required';
+                errorSpan.style.display = 'block';
+            }
+            return false;
+        }
+        
+        if (isEmail && !isValidEmail(trimmedValue)) {
+            if (field) field.classList.add('field-invalid');
+            if (errorSpan) {
+                errorSpan.textContent = 'Please enter a valid email address';
+                errorSpan.style.display = 'block';
+            }
+            return false;
+        }
+        
+        // Field is valid
+        if (field) field.classList.add('field-valid');
+        if (errorSpan) errorSpan.style.display = 'none';
+        return true;
+    }
+    
+    function updateMissingFieldsList() {
+        const missingFieldsList = document.getElementById('missingFieldsList');
+        if (!missingFieldsList) return;
+        
+        const fields = [
+            { id: 'store_name', name: 'Store Name' },
+            { id: 'address', name: 'Address' },
+            { id: 'zip_code', name: 'Zip Code' },
+            { id: 'phone', name: 'Phone' },
+            { id: 'email_address', name: 'Email Address', isEmail: true },
+            { id: 'description', name: 'Description' }
+        ];
+        
+        const missingFields = [];
+        fields.forEach(field => {
+            const fieldElement = document.getElementById(field.id);
+            if (fieldElement) {
+                const value = fieldElement.value.trim();
+                if (!value || (field.isEmail && !isValidEmail(value))) {
+                    missingFields.push(field.name);
+                }
+            }
+        });
+        
+        if (missingFields.length > 0) {
+            missingFieldsList.innerHTML = '<strong>Missing fields:</strong> ' + missingFields.join(', ');
+            missingFieldsList.style.display = 'block';
+        } else {
+            missingFieldsList.innerHTML = '<span style="color: #28a745;"><i class="fas fa-check-circle"></i> All required fields are complete!</span>';
+            missingFieldsList.style.display = 'block';
+            // Hide alert after a delay if all fields are complete
+            setTimeout(function() {
+                const alert = document.getElementById('incompleteFormAlert');
+                if (alert && isFormComplete()) {
+                    alert.style.animation = 'slideUp 0.5s ease-out';
+                    setTimeout(function() {
+                        alert.style.display = 'none';
+                    }, 500);
+                }
+            }, 2000);
+        }
+    }
+    
+    // Add event listeners to all form fields
+    document.addEventListener('DOMContentLoaded', function() {
+        const formFields = [
+            { id: 'store_name', name: 'Store Name' },
+            { id: 'address', name: 'Address' },
+            { id: 'zip_code', name: 'Zip Code' },
+            { id: 'phone', name: 'Phone' },
+            { id: 'email_address', name: 'Email Address', isEmail: true },
+            { id: 'description', name: 'Description' }
+        ];
+        
+        formFields.forEach(function(fieldConfig) {
+            const field = document.getElementById(fieldConfig.id);
+            if (field) {
+                field.addEventListener('input', function() {
+                    validateField(fieldConfig.id, fieldConfig.name, this.value, fieldConfig.isEmail);
+                    updateSaveButton();
+                    updateMissingFieldsList();
+                });
+                field.addEventListener('blur', function() {
+                    validateField(fieldConfig.id, fieldConfig.name, this.value, fieldConfig.isEmail);
+                    updateSaveButton();
+                    updateMissingFieldsList();
+                });
+                field.addEventListener('change', function() {
+                    validateField(fieldConfig.id, fieldConfig.name, this.value, fieldConfig.isEmail);
+                    updateSaveButton();
+                    updateMissingFieldsList();
+                });
+                field.addEventListener('keyup', function() {
+                    updateSaveButton();
+                });
+                field.addEventListener('paste', function() {
+                    setTimeout(function() {
+                        validateField(fieldConfig.id, fieldConfig.name, field.value, fieldConfig.isEmail);
+                        updateSaveButton();
+                        updateMissingFieldsList();
+                    }, 10);
+                });
+            }
+        });
+        
+        // Initial validation and check
+        formFields.forEach(function(fieldConfig) {
+            const field = document.getElementById(fieldConfig.id);
+            if (field) {
+                validateField(fieldConfig.id, fieldConfig.name, field.value, fieldConfig.isEmail);
+            }
+        });
+        updateSaveButton();
+        updateMissingFieldsList();
+        
+        // Force update button state on page load (in case form is already complete)
+        setTimeout(function() {
+            updateSaveButton();
+        }, 100);
+        
+        // Also update on window load to ensure it runs after all scripts
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                updateSaveButton();
+            }, 200);
+        });
+        
+        // Form submission validation
+        const storeProfileForm = document.getElementById('storeProfileForm');
+        if (storeProfileForm) {
+            storeProfileForm.addEventListener('submit', function(e) {
+                const isComplete = isFormComplete();
+                console.log('Form submission - isComplete:', isComplete);
+                
+                if (!isComplete) {
+                    e.preventDefault();
+                    showNotification('Please fill in all required fields correctly', 'error');
+                    updateMissingFieldsList();
+                    return false;
+                }
+                
+                // Ensure button is enabled before submission
+                const saveButton = document.getElementById('saveProfileBtn');
+                if (saveButton) {
+                    saveButton.disabled = false;
+                    // Show loading state (but don't disable - let form submit)
+                    const originalHTML = saveButton.innerHTML;
+                    saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+                    
+                    // Restore button if form doesn't submit (shouldn't happen, but safety)
+                    setTimeout(function() {
+                        if (saveButton.innerHTML.includes('Saving')) {
+                            saveButton.innerHTML = originalHTML;
+                        }
+                    }, 5000);
+                }
+                
+                // Allow form to submit normally
+                return true;
+            });
+        }
+        
+        // Prevent Inventory tab access if store profile is incomplete
+        const inventoryTab = document.querySelector('.tabInventory');
+        if (inventoryTab && !window.isStoreComplete) {
+            inventoryTab.style.opacity = '0.5';
+            inventoryTab.style.cursor = 'not-allowed';
+            inventoryTab.onclick = function(e) {
+                e.preventDefault();
+                alert('Please complete your store profile before accessing the inventory.');
+                // Switch back to Store Profile tab
+                document.getElementById('defaultOpen').click();
+            };
+        }
+    });
+    
+    // Override window.onload to check store completion
+    window.addEventListener('load', function() {
+        var activeTab = localStorage.getItem('activeTab');
+        // If trying to load Inventory tab but store is incomplete, force Store Profile
+        if (activeTab === 'Inventory' && !window.isStoreComplete) {
+            activeTab = 'StoreProfile';
+            localStorage.setItem('activeTab', 'StoreProfile');
+        }
+        
+        // The original window.onload from dashboardVerticalTabAnimation.js will handle the rest
+        // But we need to ensure Store Profile is shown if incomplete
+        if (!window.isStoreComplete) {
+            setTimeout(function() {
+                var storeProfileTab = document.getElementById('StoreProfile');
+                var inventoryTab = document.getElementById('Inventory');
+                if (storeProfileTab && inventoryTab) {
+                    storeProfileTab.style.display = "block";
+                    inventoryTab.style.display = "none";
+                }
+            }, 100);
+        }
+    });
+    
+    // Show notifications as top-right popups
+    function showNotification(message, type) {
+        const container = document.getElementById('notificationContainer');
+        if (!container) return;
+        
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        
+        let icon = 'fa-info-circle';
+        if (type === 'error') icon = 'fa-exclamation-circle';
+        if (type === 'success') icon = 'fa-check-circle';
+        
+        notification.innerHTML = `
+            <i class="fas ${icon} notification-icon"></i>
+            <div class="notification-content">${message}</div>
+            <span class="notification-close" onclick="this.parentElement.remove()">&times;</span>
+        `;
+        
+        container.appendChild(notification);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => notification.remove(), 300);
+        }, 5000);
+    }
+    
+    // Display Django messages as notifications
+    {% if messages %}
+        {% for message in messages %}
+            showNotification('{{ message|escapejs }}', '{{ message.tags|default:"info" }}');
+        {% endfor %}
+    {% endif %}
 </script>
 {% endblock %}
 
 {% block body %}
+    <!-- Notification Container -->
+    <div id="notificationContainer" class="notification-container"></div>
     <header>
         <div class="accountContainer">
-                <span id="hello-msg">Hello, {{request.user.first_name|default:request.user.email}}</span>   
+            <span id="hello-msg">Hello, {{request.user.first_name|default:request.user.email}}</span>   
         </div>
 
         <div class="divTitleDashboard">
             <h1>DASHBOARD</h1>
         </div>
-    </header>
 
     <div class="logoutButtonContainer">
-        <a style="text-decoration: none;" href="{% url 'logout' %}">
+            <a style="text-decoration: none;" href="{% url 'logout' %}">
             <button id="logoutButton" class="logoutButton" type="logoutButton">Logout<i class="fa fa-sign-out"></i></button>    
         </a>
     </div>
+    </header>
 
+    <main>
     <section>
         <div class="divSectionDashboard">
             <div class="navigationBar">
@@ -45,27 +1183,70 @@
     
             <div id="StoreProfile" class="tabContent">
                 <div class="StoreProfileContent">
-                    <center><h1>STORE PROFILE</h1></center>
-                    <form method="post">
+                    <h1 style="text-align: center; margin-bottom: 20px;">STORE PROFILE</h1>
+                    
+                    <!-- Incomplete Form Reminder Alert -->
+                    {% if not is_store_complete %}
+                    <div id="incompleteFormAlert" class="incomplete-form-alert">
+                        <div class="alert-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="alert-content">
+                            <h3>Complete Your Store Profile</h3>
+                            <p>Please fill in all required fields below to save your store profile and access the inventory.</p>
+                            <div class="missing-fields-list" id="missingFieldsList">
+                                <span class="loading-text">Checking fields...</span>
+                            </div>
+                        </div>
+                        <button class="alert-close" onclick="document.getElementById('incompleteFormAlert').style.display='none'">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    {% endif %}
+                    
+                    <form method="post" id="storeProfileForm" action="{% url 'dashboard' %}">
                         {% csrf_token %}
-                        <label for="store_name">Store Name:</label>
-                        <input type="text" id="store_name" name="store_name" value="{{ store_profile.store_name }}">
+                        <div class="form-field-wrapper">
+                            <label for="store_name">Store Name <span class="required-star">*</span></label>
+                            <input type="text" id="store_name" name="store_name" value="{{ store_profile.store_name }}" class="form-field">
+                            <span class="field-error" id="store_name_error"></span>
+                        </div>
 
-                        <label for="address">Address:</label>
-                        <input type="text" id="address" name="address" value="{{ store_profile.address }}"><br>
+                        <div class="form-field-wrapper">
+                            <label for="address">Address <span class="required-star">*</span></label>
+                            <input type="text" id="address" name="address" value="{{ store_profile.address }}" class="form-field">
+                            <span class="field-error" id="address_error"></span>
+                        </div>
 
-                        <label for="zip_code">Zip Code:</label>
-                        <input type="text" id="zip_code" name="zip_code" value="{{ store_profile.zip_code }}"><br>
+                        <div class="form-field-wrapper">
+                            <label for="zip_code">Zip Code <span class="required-star">*</span></label>
+                            <input type="text" id="zip_code" name="zip_code" value="{{ store_profile.zip_code }}" class="form-field">
+                            <span class="field-error" id="zip_code_error"></span>
+                        </div>
 
-                        <label for="phone">Phone:</label>
-                        <input type="text" id="phone" name="phone" value="{{ store_profile.phone }}"><br>
+                        <div class="form-field-wrapper">
+                            <label for="phone">Phone <span class="required-star">*</span></label>
+                            <input type="text" id="phone" name="phone" value="{{ store_profile.phone }}" class="form-field">
+                            <span class="field-error" id="phone_error"></span>
+                        </div>
 
-                        <label for="email_address">Email Address:</label>
-                        <input type="email" id="email_address" name="email_address" value="{{ store_profile.email_address }}"><br>
+                        <div class="form-field-wrapper">
+                            <label for="email_address">Email Address <span class="required-star">*</span></label>
+                            <input type="email" id="email_address" name="email_address" value="{{ store_profile.email_address }}" class="form-field">
+                            <span class="field-error" id="email_address_error"></span>
+                        </div>
 
-                        <label for="description">Description:</label>
-                        <textarea id="description" name="description">{{ store_profile.description }}</textarea><br>
-                        <center><button type="submit" class="saveprofile">Save</button></center>
+                        <div class="form-field-wrapper">
+                            <label for="description">Description <span class="required-star">*</span></label>
+                            <textarea id="description" name="description" class="form-field">{{ store_profile.description }}</textarea>
+                            <span class="field-error" id="description_error"></span>
+                        </div>
+                        
+                        <center>
+                            <button type="submit" id="saveProfileBtn" class="saveprofile" disabled>
+                                <i class="fas fa-save"></i> Save Profile
+                            </button>
+                        </center>
                     </form>
                 </div>
             </div>
@@ -113,6 +1294,7 @@
             </div>
         </div>
     </section>
+    </main>
     
 <!-- Modal for Adding Products -->
 <div id="addProductModal" class="modal">
@@ -161,15 +1343,6 @@
 
 
 
-    <footer>
-        <div class="divfooter">
-            <a href="#about" onclick="showContent('about')">About</a>
-            <a href="#contact" onclick="showContent('contact')">Contact</a>
-            <a href="#termsofservice" onclick="showContent('terms')">Terms of Service</a>
-            <a href="#privacypolicy" onclick="showContent('privacy')">Privacy Policy</a>
-        </div>
-    </footer>
-
     <!-- Slide Navigation -->
     <div class="slide-nav" id="slideNav">
         <div class="slide-content" id="slideContent">
@@ -181,10 +1354,37 @@
     </div>
 
 
-    <script src="{% static 'js/footerAnimation.js' %}"></script>
     <script src="{% static 'js/dashboardVerticalTabAnimation.js' %}"></script>
 
     <script>
+        // Override openTab function after external script loads
+        (function() {
+            const originalOpenTab = window.openTab;
+            window.openTab = function(event, tabName) {
+                // Check if trying to access Inventory without complete store profile
+                // Use window.isStoreComplete to ensure it's accessible
+                const isComplete = window.isStoreComplete !== undefined ? window.isStoreComplete : false;
+                if (tabName === 'Inventory' && !isComplete) {
+                    alert('Please complete your store profile before accessing the inventory.');
+                    // Show Store Profile tab instead
+                    if (originalOpenTab) {
+                        originalOpenTab.call(this, event, 'StoreProfile');
+                    } else {
+                        // Fallback if original function doesn't exist
+                        document.getElementById('StoreProfile').style.display = "block";
+                        document.getElementById('Inventory').style.display = "none";
+                        document.getElementById('defaultOpen').click();
+                    }
+                    return;
+                }
+                
+                // Call original function if store is complete
+                if (originalOpenTab) {
+                    originalOpenTab.call(this, event, tabName);
+                }
+            };
+        })();
+        
         function openAddProductModal() {
             document.getElementById("addProductModal").style.display = "block";
         }

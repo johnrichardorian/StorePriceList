@@ -1,10 +1,12 @@
         /* CSS for footer */
         footer {
-            bottom: 0;
+            position: relative;
             background-color: #333;
             color: #fff;
             padding: 25px 0;
             text-align: center;
+            width: 100%;
+            margin-top: auto;
         }
         .divfooter {
             display: flex;

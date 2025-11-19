@@ -131,6 +131,25 @@ def dashboard(request):
     
     # Only show products that belong to this user's store
     products = Inventory.objects.filter(store_profile=store_profile)
+    
+    # Check if store profile is complete (matching iOS app logic)
+    def is_store_complete(profile):
+        """Check if all required fields are filled and email is valid"""
+        import re
+        all_fields_filled = (
+            profile.store_name and profile.store_name.strip() and
+            profile.address and profile.address.strip() and
+            profile.zip_code and profile.zip_code.strip() and
+            profile.phone and profile.phone.strip() and
+            profile.email_address and profile.email_address.strip() and
+            profile.description and profile.description.strip()
+        )
+        # Email format validation
+        email_pattern = r'^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$'
+        email_valid = bool(re.match(email_pattern, profile.email_address or '', re.IGNORECASE))
+        return all_fields_filled and email_valid
+    
+    is_complete = is_store_complete(store_profile)
 
     if request.method == 'POST':
         if 'store_name' in request.POST:
@@ -143,6 +162,8 @@ def dashboard(request):
             store_profile.description = request.POST.get('description', '').strip()
             store_profile.save()
             messages.success(request, 'Store details saved successfully')
+            # Refresh to update is_complete status
+            return redirect('dashboard')
         elif 'product_name' in request.POST:
             # Add new product - ensure it's linked to this user's store
             product_name = request.POST.get('product_name', '').strip()
@@ -173,7 +194,8 @@ def dashboard(request):
 
     context = {
         'store_profile': store_profile,
-        'products': products
+        'products': products,
+        'is_store_complete': is_complete
     }
     return render(request, 'dashboard.html', context)
 

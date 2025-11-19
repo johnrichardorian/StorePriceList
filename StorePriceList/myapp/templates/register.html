@@ -170,6 +170,82 @@
 			color: #999;
 			font-size: 12px;
 		}
+		/* Top-right popup notifications */
+		.notification-container {
+			position: fixed;
+			top: 20px;
+			right: 20px;
+			z-index: 10000;
+			max-width: 400px;
+		}
+		.notification {
+			background: white;
+			border-radius: 8px;
+			box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+			padding: 16px 20px;
+			margin-bottom: 10px;
+			display: flex;
+			align-items: center;
+			animation: slideInRight 0.3s ease-out;
+			border-left: 4px solid;
+		}
+		.notification.error {
+			border-left-color: #dc3545;
+			background: #f8d7da;
+			color: #721c24;
+		}
+		.notification.success {
+			border-left-color: #28a745;
+			background: #d4edda;
+			color: #155724;
+		}
+		.notification.info {
+			border-left-color: #17a2b8;
+			background: #d1ecf1;
+			color: #0c5460;
+		}
+		.notification-icon {
+			margin-right: 12px;
+			font-size: 20px;
+		}
+		.notification-content {
+			flex: 1;
+			font-size: 14px;
+			font-weight: 500;
+		}
+		.notification-close {
+			margin-left: 12px;
+			cursor: pointer;
+			font-size: 18px;
+			opacity: 0.6;
+			transition: opacity 0.2s;
+		}
+		.notification-close:hover {
+			opacity: 1;
+		}
+		@keyframes slideInRight {
+			from {
+				transform: translateX(100%);
+				opacity: 0;
+			}
+			to {
+				transform: translateX(0);
+				opacity: 1;
+			}
+		}
+		@keyframes slideOutRight {
+			from {
+				transform: translateX(0);
+				opacity: 1;
+			}
+			to {
+				transform: translateX(100%);
+				opacity: 0;
+			}
+		}
+		.notification.hide {
+			animation: slideOutRight 0.3s ease-out forwards;
+		}
 	</style>
 {% endblock %}
 
@@ -248,11 +324,60 @@
 				}
 			});
 		}
+		
+		// Show notifications as top-right popups
+		function showNotification(message, type) {
+			const container = document.getElementById('notificationContainer');
+			if (!container) return;
+			
+			const notification = document.createElement('div');
+			notification.className = `notification ${type}`;
+			
+			let icon = 'fa-info-circle';
+			if (type === 'error') icon = 'fa-exclamation-circle';
+			if (type === 'success') icon = 'fa-check-circle';
+			
+			notification.innerHTML = `
+				<i class="fas ${icon} notification-icon"></i>
+				<div class="notification-content">${message}</div>
+				<span class="notification-close" onclick="this.parentElement.remove()">&times;</span>
+			`;
+			
+			container.appendChild(notification);
+			
+			// Auto remove after 5 seconds
+			setTimeout(() => {
+				notification.classList.add('hide');
+				setTimeout(() => notification.remove(), 300);
+			}, 5000);
+		}
+		
+		// Display Django messages as notifications
+		{% if messages %}
+			{% for message in messages %}
+				showNotification('{{ message|escapejs }}', '{{ message.tags|default:"info" }}');
+			{% endfor %}
+		{% endif %}
+		
+		// Display form errors as notifications
+		{% if form.errors %}
+			{% for field in form %}
+				{% for error in field.errors %}
+					showNotification('{{ error|escapejs }}', 'error');
+				{% endfor %}
+			{% endfor %}
+			{% for error in form.non_field_errors %}
+				showNotification('{{ error|escapejs }}', 'error');
+			{% endfor %}
+		{% endif %}
 	});
 </script>
 {% endblock %}
 	
 {% block body %}
+	<!-- Notification Container -->
+	<div id="notificationContainer" class="notification-container"></div>
+	
 	<div class="register-container">
 		<div class="register-card">
 			<div class="register-icon">
@@ -261,82 +386,60 @@
 			<h2 class="register-title">Create Your Account</h2>
 			<p class="register-subtitle">Register to access Store Price List</p>
 			
-			{% if form.errors %}
-				<div class="error-message">
-					{% for field in form %}
-						{% for error in field.errors %}
-							<div>{{ error }}</div>
-						{% endfor %}
-					{% endfor %}
-					{% for error in form.non_field_errors %}
-						<div>{{ error }}</div>
-					{% endfor %}
-				</div>
-			{% endif %}
-			
-			{% if messages %}
-				{% for message in messages %}
-					{% if message.tags == 'error' %}
-						<div class="error-message">{{ message }}</div>
-					{% else %}
-						<div class="success-message">{{ message }}</div>
-					{% endif %}
-				{% endfor %}
-			{% endif %}
-			
 			<form method="POST" action="" id="registerForm">
-				{% csrf_token %}
+                        {% csrf_token %}
 				
 				<div class="form-group-custom">
 					<div class="input-group-custom">
 						{{form.first_name}}
 						<span class="input-icon"><i class="fas fa-user"></i></span>
-					</div>
-				</div>
+							</div>
+						</div>
 				
 				<div class="form-group-custom">
 					<div class="input-group-custom">
-						{{form.email}}
+							{{form.email}}
 						<span class="input-icon"><i class="fas fa-envelope"></i></span>
-					</div>
-				</div>
+						</div>
+							</div>
 				
 				<div class="form-group-custom">
 					<div class="input-group-custom">
-						{{form.password1}}
+							{{form.password1}}
 						<span class="input-icon password-toggle" id="togglePassword1">
 							<i class="fas fa-eye-slash"></i>
 						</span>
-					</div>
-				</div>
-				
+							</div>
+						</div>
+
 				<div class="form-group-custom">
 					<div class="input-group-custom">
 						{{form.password2}}
 						<span class="input-icon password-toggle" id="togglePassword2">
 							<i class="fas fa-eye-slash"></i>
 						</span>
-					</div>
-				</div>
-				
+				   		</div>
+                        </div>
+
 				<button type="submit" class="btn-register">Register</button>
-			</form>
+					</form>
 			
 			<div class="divider">
 				<span>OR</span>
-			</div>
-			
+				</div>
+				
 			<a href="{% url 'home' %}" class="btn-guest">
 				<i class="fas fa-user"></i> Continue as Guest
 			</a>
 			
 			<div class="login-link">
 				Already have an account? <a href="{% url 'loginPage' %}">Login</a>
-			</div>
+					</div>
 			
 			<div class="footer-text">
 				Your data is safe with Store Price List
+				</div>
 			</div>
 		</div>
-	</div>
 {% endblock %}
+
